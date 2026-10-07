@@ -23,11 +23,22 @@ en **tres contenedores** (`db`, `backend`, `frontend`) con `docker compose`.
 - Node.js 20+ si quieres ejecutar el frontend fuera de Docker durante el desarrollo.
 - El runtime de tu backend (Node, .NET, PHP, Python, etc.) si lo desarrollas fuera de Docker.
 
-## Levantar la base de datos
+## Antes de que empiece el tiempo
+
+Descarga imágenes y dependencias antes de iniciar el cronómetro; no forman parte de la prueba:
 
 ```bash
 git clone https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
+docker compose up -d                 # descarga SQL Server (~1.5 GB) y carga los datos
+cd frontend && npm install && cd ..  # dependencias de la plantilla React
+```
+
+Ten listo el runtime de tu backend y revisa el ejemplo de tu stack en `docs/ejemplos/`.
+
+## Levantar la base de datos
+
+```bash
 docker compose up -d
 ```
 
@@ -52,7 +63,7 @@ docker exec -it mantenimiento-db /opt/mssql-tools18/bin/sqlcmd \
   -Q "SELECT (SELECT COUNT(*) FROM dbo.Usuarios) AS Usuarios, (SELECT COUNT(*) FROM dbo.Contratos) AS Contratos, (SELECT COUNT(*) FROM dbo.Tickets) AS Tickets"
 ```
 
-Resultado esperado: 6 usuarios, 3 contratos, 15 tickets.
+Resultado esperado: 6 usuarios, 4 contratos, 17 tickets.
 
 > En Windows con Git Bash, antepón `MSYS_NO_PATHCONV=1` al comando anterior para que no convierta la
 > ruta `/opt/...`.
@@ -70,9 +81,25 @@ Resultado esperado: 6 usuarios, 3 contratos, 15 tickets.
 │       └── 02-seed.sql       # Datos iniciales (usuarios, contratos, tickets)
 ├── backend/                  # <- tu API REST (ver backend/README.md)
 ├── frontend/                 # <- plantilla React (ver frontend/README.md)
+├── tests/
+│   ├── smoke.sh              # Verificación automática de la API (la usa el evaluador)
+│   └── api.http              # Las mismas peticiones para REST Client / Postman
+├── docs/
+│   ├── guia-candidato.html   # Guía visual con el mapa conceptual
+│   └── ejemplos/             # Dockerfile, conexión, bcrypt y JWT para Node, .NET, Python y PHP
 ├── README.md                 # este archivo (lo reemplazas con el tuyo al entregar)
 └── PRUEBA_TECNICA.md         # enunciado completo
 ```
+
+## Verificar tu API
+
+```bash
+bash tests/smoke.sh                        # en Windows: Git Bash
+API_URL=http://localhost:3001/api bash tests/smoke.sh
+bash tests/smoke.sh --no-write             # sin los 3 casos que modifican el ticket 107
+```
+
+Objetivo: `FAIL: 0`. El evaluador ejecuta este mismo script. Detalle en [`tests/README.md`](./tests/README.md).
 
 ## Conexión a la base de datos
 

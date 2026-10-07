@@ -8,6 +8,8 @@
      supervisor     -> Supervisor2026!
      tecnico01..04  -> Tecnico2026!
    tecnico04 está INACTIVO (Activo = 0) y no debe poder iniciar sesión.
+
+   Totales: 6 usuarios, 4 contratos, 17 tickets.
    ===================================================================== */
 
 USE MantenimientoDB;
@@ -42,15 +44,18 @@ BEGIN
     INSERT INTO dbo.Contratos (IdContrato, NumeroContrato, NombreContrato, FechaInicio, FechaFin, Estatus, IdUsuarioResponsable) VALUES
     (1, 'CON-001', 'Mantenimiento Planta Norte', '2026-01-01', '2026-12-31', 'ACTIVO',     2),
     (2, 'CON-002', 'Mantenimiento Planta Sur',   '2026-03-01', '2027-02-28', 'ACTIVO',     2),
-    (3, 'CON-003', 'Mantenimiento Oficinas',     '2025-01-01', '2025-12-31', 'FINALIZADO', 1);
+    (3, 'CON-003', 'Mantenimiento Oficinas',     '2025-01-01', '2025-12-31', 'FINALIZADO', 1),
+    (4, 'CON-004', 'Mantenimiento Centro de Distribución', '2026-06-01', '2027-05-31', 'ACTIVO', 2);
 
     SET IDENTITY_INSERT dbo.Contratos OFF;
 END
 GO
 
 /* ------------------------------------------------------------------ */
-/* Tickets (15)                                                        */
-/*   PENDIENTE: 5 | ASIGNADO: 2 | EN_PROCESO: 3 | FINALIZADO: 4 | CANCELADO: 1 */
+/* Tickets (17)                                                        */
+/*   PENDIENTE: 6 | ASIGNADO: 3 | EN_PROCESO: 3 | FINALIZADO: 4 | CANCELADO: 1 */
+/*   CON-004 solo tiene tickets de tecnico02: sirve para probar que     */
+/*   tecnico01 y tecnico03 NO ven ese contrato (403 en el detalle).     */
 /* ------------------------------------------------------------------ */
 IF NOT EXISTS (SELECT 1 FROM dbo.Tickets)
 BEGIN
@@ -74,7 +79,10 @@ BEGIN
     -- CON-003 Oficinas (contrato finalizado)
     (113, 3, 'PREVENTIVO', 'Revisión de aire acondicionado piso 1',            '2025-06-10 09:00:00', 'FINALIZADO', 3),
     (114, 3, 'CORRECTIVO', 'Reparación de iluminación piso 2',                 '2025-08-05 15:30:00', 'FINALIZADO', 4),
-    (115, 3, 'EMERGENCIA', 'Corto circuito en tablero principal',              '2025-11-20 07:50:00', 'FINALIZADO', 5);
+    (115, 3, 'EMERGENCIA', 'Corto circuito en tablero principal',              '2025-11-20 07:50:00', 'FINALIZADO', 5),
+    -- CON-004 Centro de Distribución (solo tecnico02)
+    (116, 4, 'PREVENTIVO', 'Revisión de racks y estanterías',                  '2026-09-25 09:00:00', 'ASIGNADO',   4),
+    (117, 4, 'CORRECTIVO', 'Reparación de puerta seccional de andén 3',        '2026-09-28 11:30:00', 'PENDIENTE',  NULL);
 
     SET IDENTITY_INSERT dbo.Tickets OFF;
 END

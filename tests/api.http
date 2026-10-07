@@ -1,0 +1,158 @@
+### =====================================================================
+### Prueba Técnica - Sistema de Mantenimiento
+### tests/api.http : peticiones de ejemplo para la extensión "REST Client"
+### de VS Code (también se pueden copiar a Postman / Insomnia).
+###
+### 1. Ajusta @api si tu backend no corre en localhost:8080.
+### 2. Ejecuta primero los login y copia el token en las variables @sup, @t1, @t2.
+### =====================================================================
+
+@api = http://localhost:8080/api
+@sup = PEGA_AQUI_EL_TOKEN_DE_SUPERVISOR
+@t1  = PEGA_AQUI_EL_TOKEN_DE_TECNICO01
+@t2  = PEGA_AQUI_EL_TOKEN_DE_TECNICO02
+
+### ---- Autenticación ---------------------------------------------------
+
+### Login supervisor -> 200 { token, user }
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "username": "supervisor", "password": "Supervisor2026!" }
+
+### Login tecnico01 -> 200
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "username": "tecnico01", "password": "Tecnico2026!" }
+
+### Login tecnico02 -> 200
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "username": "tecnico02", "password": "Tecnico2026!" }
+
+### Usuario inactivo -> 401
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "username": "tecnico04", "password": "Tecnico2026!" }
+
+### Contraseña incorrecta -> 401
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "username": "supervisor", "password": "mala" }
+
+### Body incompleto -> 400
+POST {{api}}/auth/login
+Content-Type: application/json
+
+{ "username": "supervisor" }
+
+### ---- Protección -------------------------------------------------------
+
+### Sin token -> 401
+GET {{api}}/contracts
+
+### Token inválido -> 401
+GET {{api}}/contracts
+Authorization: Bearer token.invalido
+
+### ---- Contratos --------------------------------------------------------
+
+### Supervisor: todos los contratos (4) -> 200
+GET {{api}}/contracts
+Authorization: Bearer {{sup}}
+
+### tecnico01: solo CON-001, CON-002, CON-003 (no CON-004) -> 200
+GET {{api}}/contracts
+Authorization: Bearer {{t1}}
+
+### tecnico01 en CON-004 -> 403
+GET {{api}}/contracts/4
+Authorization: Bearer {{t1}}
+
+### Contrato inexistente -> 404
+GET {{api}}/contracts/999
+Authorization: Bearer {{sup}}
+
+### ---- Tickets ----------------------------------------------------------
+
+### Supervisor: los 6 tickets de CON-001 -> 200
+GET {{api}}/contracts/1/tickets
+Authorization: Bearer {{sup}}
+
+### tecnico01: solo 101 y 104 -> 200
+GET {{api}}/contracts/1/tickets
+Authorization: Bearer {{t1}}
+
+### ---- PATCH: reglas (no modifican datos) -------------------------------
+
+### tecnico01 sobre ticket ajeno (102) -> 403
+PATCH {{api}}/tickets/102
+Authorization: Bearer {{t1}}
+Content-Type: application/json
+
+{ "estatus": "EN_PROCESO" }
+
+### Ticket FINALIZADO (104) -> 409
+PATCH {{api}}/tickets/104
+Authorization: Bearer {{sup}}
+Content-Type: application/json
+
+{ "estatus": "EN_PROCESO" }
+
+### Estatus inválido -> 400
+PATCH {{api}}/tickets/101
+Authorization: Bearer {{sup}}
+Content-Type: application/json
+
+{ "estatus": "INVENTADO" }
+
+### ASIGNADO -> FINALIZADO directo -> 409
+PATCH {{api}}/tickets/101
+Authorization: Bearer {{sup}}
+Content-Type: application/json
+
+{ "estatus": "FINALIZADO" }
+
+### ---- PATCH: escritura real (modifica el ticket 107) -------------------
+
+### tecnico02 inicia su ticket 107 -> 200
+PATCH {{api}}/tickets/107
+Authorization: Bearer {{t2}}
+Content-Type: application/json
+
+{ "estatus": "EN_PROCESO" }
+
+### tecnico02 finaliza su ticket 107 -> 200
+PATCH {{api}}/tickets/107
+Authorization: Bearer {{t2}}
+Content-Type: application/json
+
+{ "estatus": "FINALIZADO" }
+
+### Reabrir ticket finalizado -> 409
+PATCH {{api}}/tickets/107
+Authorization: Bearer {{t2}}
+Content-Type: application/json
+
+{ "estatus": "EN_PROCESO" }
+
+### ---- Deseables --------------------------------------------------------
+
+### Dashboard supervisor -> { contratosActivos: 3, ticketsPendientes: 6, ticketsEnProceso: 3 }
+GET {{api}}/dashboard
+Authorization: Bearer {{sup}}
+
+### Técnicos activos (solo admin/supervisor) -> 200
+GET {{api}}/users?rol=TECNICO
+Authorization: Bearer {{sup}}
+
+### Asignar ticket 103 a tecnico02 -> 200, pasa a ASIGNADO
+POST {{api}}/tickets/103/assign
+Authorization: Bearer {{sup}}
+Content-Type: application/json
+
+{ "idUsuario": 4 }

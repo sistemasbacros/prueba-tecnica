@@ -75,7 +75,7 @@
  * --- DESEABLES (solo si sobra tiempo) --------------------------------
  *
  * 6) GET /dashboard                                    → api.getDashboard()
- *    200: { "contratosActivos": 2, "ticketsPendientes": 5, "ticketsEnProceso": 3 }
+ *    200: { "contratosActivos": 3, "ticketsPendientes": 6, "ticketsEnProceso": 3 }   (supervisor)
  *    (calculado para el usuario autenticado; alternativa a contar en el frontend)
  *
  * 7) POST /tickets/{id}/assign                         → api.assignTicket(id, idUsuario)

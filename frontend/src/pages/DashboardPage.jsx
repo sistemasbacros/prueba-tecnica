@@ -21,6 +21,7 @@ import { ErrorMessage, Loading } from '../components/Feedback.jsx';
  *      Opción A (recomendada): implementar en el backend GET /api/dashboard
  *        que devuelva { contratosActivos, ticketsPendientes, ticketsEnProceso }
  *        ya filtrados por el usuario autenticado, y llamar a api.getDashboard().
+ *        (supervisor: { contratosActivos: 3, ticketsPendientes: 6, ticketsEnProceso: 3 })
  *
  *      Opción B: por cada contrato devuelto, llamar a api.getContractTickets(id)
  *        (idealmente en paralelo con Promise.all), unir los tickets y contar
@@ -34,8 +35,8 @@ import { ErrorMessage, Loading } from '../components/Feedback.jsx';
  *      error con <ErrorMessage /> en lugar de dejar los contadores en "—".
  *
  * Resultado esperado con los datos iniciales:
- *      administrador y supervisor → activos 2, pendientes 5, en proceso 3
- *      tecnico01 → 2, 0, 0   ·   tecnico02 → 2, 0, 1   ·   tecnico03 → 2, 0, 2
+ *      administrador y supervisor → activos 3, pendientes 6, en proceso 3
+ *      tecnico01 → 2, 0, 0   ·   tecnico02 → 3, 0, 1   ·   tecnico03 → 2, 0, 2
  * ===================================================================== */
 
 /**

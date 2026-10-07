@@ -223,7 +223,7 @@
       <text x="786" y="178" class="file">db/init/01-schema.sql</text>
       <text x="786" y="194" class="file">db/init/02-seed.sql</text>
       <text x="786" y="218" class="t-small">Usuarios · Contratos · Tickets</text>
-      <text x="786" y="234" class="t-small">6 · 3 · 15 registros</text>
+      <text x="786" y="234" class="t-small">6 · 4 · 17 registros</text>
       <text x="857" y="258" text-anchor="middle" class="t-mono">contenedor db · :1433</text>
 
       <!-- Flechas principales -->
@@ -252,8 +252,10 @@
       <text x="190" y="440" class="t-small">arranque, credenciales, errores</text>
       <text x="36" y="460" class="file">frontend/src/api/client.js</text>
       <text x="190" y="460" class="t-small">endpoints exactos a exponer</text>
-      <text x="36" y="480" class="file">backend/README.md</text>
-      <text x="190" y="480" class="t-small">resumen de endpoints</text>
+      <text x="36" y="480" class="file">tests/smoke.sh</text>
+      <text x="190" y="480" class="t-small">verificación automática de tu API</text>
+      <text x="36" y="500" class="file">docs/ejemplos/</text>
+      <text x="190" y="500" class="t-small">Dockerfile y conexión por stack</text>
 
       <rect class="box box-build" x="350" y="370" width="300" height="140"></rect>
       <text x="366" y="396" class="t-title">Documentación que entregas</text>
@@ -266,8 +268,8 @@
       <rect class="box box-neutral" x="680" y="370" width="285" height="140"></rect>
       <text x="696" y="396" class="t-title">Cómo lo evaluamos</text>
       <text x="696" y="420" class="t-small">1. docker compose up -d --build desde cero</text>
-      <text x="696" y="438" class="t-small">2. Login con los 3 roles y con tecnico04</text>
-      <text x="696" y="456" class="t-small">3. Permisos con curl: 401 · 403 · 409</text>
+      <text x="696" y="438" class="t-small">2. bash tests/smoke.sh (el mismo que tú usas)</text>
+      <text x="696" y="456" class="t-small">3. Login con los 3 roles y navegación</text>
       <text x="696" y="474" class="t-small">4. Lectura de código y Dockerfiles</text>
       <text x="696" y="492" class="t-small">5. README y respuesta de escalabilidad</text>
 
@@ -297,6 +299,8 @@
       <tr><td class="d1">init/01-schema.sql</td><td><span class="chip chip-delivered">Entregado</span></td><td class="what">Base, login <code>mantenimiento_app</code>, tablas, índices. No se modifica.</td></tr>
       <tr><td class="d1">init/02-seed.sql</td><td><span class="chip chip-delivered">Entregado</span></td><td class="what">Usuarios con bcrypt, contratos y tickets. No se modifica.</td></tr>
       <tr><td class="d1">init/03-*.sql</td><td><span class="chip chip-build">Opcional</span></td><td class="what">Solo si necesitas vistas o índices extra. Explícalo en tu README.</td></tr>
+      <tr><td class="dir">tests/</td><td><span class="chip chip-delivered">Entregado</span></td><td class="what"><code>smoke.sh</code> verifica tu API con 36 casos; <code>api.http</code> para REST Client o Postman. El evaluador usa el mismo script.</td></tr>
+      <tr><td class="dir">docs/ejemplos/</td><td><span class="chip chip-delivered">Entregado</span></td><td class="what">Dockerfile, conexión, bcrypt y JWT para Node, .NET, Python y PHP. Copia lo que te sirva.</td></tr>
       <tr><td class="dir">backend/</td><td><span class="chip chip-build">Tú lo creas</span></td><td class="what">Tu API completa. Solo hay un README con el resumen de endpoints.</td></tr>
       <tr><td class="d1">Dockerfile</td><td><span class="chip chip-build">Crear</span></td><td class="what">Imagen de tu API. Multi-stage y sin secretos horneados.</td></tr>
       <tr><td class="d1">.env.example</td><td><span class="chip chip-build">Crear</span></td><td class="what">DB_HOST=db, DB_USER=mantenimiento_app, JWT_SECRET, PORT…</td></tr>
@@ -320,9 +324,10 @@
       <ul>
         <li>SQL Server 2022 en Docker con inicialización automática e idempotente.</li>
         <li>Base <code>MantenimientoDB</code> con Usuarios, Contratos y Tickets, claves, CHECK e índices.</li>
-        <li>6 usuarios con contraseña bcrypt (uno inactivo), 3 contratos, 15 tickets.</li>
+        <li>6 usuarios con contraseña bcrypt (uno inactivo), 4 contratos, 17 tickets.</li>
         <li>Login de base de datos <code>mantenimiento_app</code> con permisos mínimos.</li>
         <li>Plantilla React que compila, con login funcional, rutas protegidas, cliente HTTP, tablas y Dockerfile.</li>
+        <li>Script <code>tests/smoke.sh</code> con los mismos 36 casos que usa el evaluador, y ejemplos de Dockerfile y conexión por stack en <code>docs/ejemplos/</code>.</li>
       </ul>
     </div>
     <div class="panel panel-build">
@@ -390,7 +395,7 @@
       </tbody>
     </table>
   </div>
-  <div class="note">Ocultar un botón en React no es seguridad. El evaluador hará las peticiones con curl: un técnico haciendo PATCH al ticket 102 debe recibir 403, y cualquier PATCH al ticket 104 (finalizado) debe recibir 409.</div>
+  <div class="note">Ocultar un botón en React no es seguridad. El evaluador ejecuta <code>bash tests/smoke.sh</code> contra tu API: un técnico haciendo PATCH al ticket 102 debe recibir 403, cualquier PATCH al ticket 104 (finalizado) debe recibir 409 y <code>tecnico01</code> debe recibir 403 en el contrato CON-004, donde no tiene tickets. Ejecuta el script tú mismo antes de entregar.</div>
 
   <h2 id="prioridad">Orden de trabajo sugerido</h2>
   <p>No se espera terminar todo. Se evalúa qué priorizas y la calidad de lo que entregas. Avanza en este orden y haz commit en cuanto cada punto funcione.</p>
@@ -438,21 +443,25 @@ TrustServerCertificate=True;</code></pre>
     </div>
   </div>
 
-  <h2 id="arranque">Arranque</h2>
+  <h2 id="arranque">Antes de que empiece el tiempo</h2>
+  <p>Estos pasos descargan imágenes y dependencias. Hazlos antes de iniciar el cronómetro; no forman parte de la prueba.</p>
   <pre><code>git clone https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
-docker compose up -d            # SQL Server + datos (db-init termina en Exited 0)
+docker compose up -d            # descarga SQL Server (~1.5 GB) y carga los datos
 docker compose logs db-init     # "Base de datos inicializada correctamente"
 
-cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:5173 (desarrollo)</code></pre>
-  <p>Al entregar, el evaluador ejecutará únicamente <code>docker compose up -d --build</code> y abrirá el navegador.</p>
+cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:5173 (desarrollo)
+# Ten listo el runtime de tu backend (Node, .NET SDK, Python, PHP+Composer…)
+# Lee docs/ejemplos/ para tu stack y tests/README.md</code></pre>
+  <p>Al entregar, el evaluador ejecutará <code>docker compose up -d --build</code>, luego <code>bash tests/smoke.sh</code> y abrirá el navegador.</p>
 
   <h2 id="checklist">Antes de entregar</h2>
   <ul class="check">
     <li><code>docker compose down -v &amp;&amp; docker compose up -d --build</code> funciona desde cero.</li>
+    <li><code>bash tests/smoke.sh</code> termina con <code>FAIL: 0</code>.</li>
     <li>administrador, supervisor y tecnico01 entran; tecnico04 es rechazado.</li>
-    <li>El dashboard muestra 2 contratos activos, 5 pendientes y 3 en proceso para supervisor.</li>
-    <li>tecnico01 solo ve sus tickets y recibe 403 al modificar el ticket 102.</li>
+    <li>El dashboard muestra 3 contratos activos, 6 pendientes y 3 en proceso para supervisor.</li>
+    <li>tecnico01 no ve CON-004, solo ve sus tickets y recibe 403 al modificar el ticket 102.</li>
     <li>PATCH al ticket 104 responde 409. Petición sin token responde 401.</li>
     <li>Ningún secreto en el código; existe <code>.env.example</code>.</li>
     <li>README con todas las secciones y la pregunta de escalabilidad respondida.</li>
@@ -463,6 +472,8 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:
     <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
     <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/README.md">README del repositorio</a>
     <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/frontend/src/api/client.js">Endpoints en client.js</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/tests/README.md">Verificación (tests/)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/docs/ejemplos/README.md">Ejemplos por stack</a>
   </div>
 
 </div>

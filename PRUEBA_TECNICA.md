@@ -187,8 +187,9 @@ Desde tu máquina (desarrollo sin contenedor) cambia `db` por `localhost`.
 | 1  | `CON-001` | Mantenimiento Planta Norte | 2026-01-01 | 2026-12-31 | ACTIVO     | supervisor  |
 | 2  | `CON-002` | Mantenimiento Planta Sur   | 2026-03-01 | 2027-02-28 | ACTIVO     | supervisor  |
 | 3  | `CON-003` | Mantenimiento Oficinas     | 2025-01-01 | 2025-12-31 | FINALIZADO | administrador |
+| 4  | `CON-004` | Mantenimiento Centro de Distribución | 2026-06-01 | 2027-05-31 | ACTIVO | supervisor |
 
-**Tickets** (15 en total)
+**Tickets** (17 en total)
 
 | Id  | Contrato | Tipo       | Estatus    | Asignado a |
 |-----|----------|------------|------------|------------|
@@ -207,13 +208,30 @@ Desde tu máquina (desarrollo sin contenedor) cambia `db` por `localhost`.
 | 113 | CON-003  | PREVENTIVO | FINALIZADO | tecnico01  |
 | 114 | CON-003  | CORRECTIVO | FINALIZADO | tecnico02  |
 | 115 | CON-003  | EMERGENCIA | FINALIZADO | tecnico03  |
+| 116 | CON-004  | PREVENTIVO | ASIGNADO   | tecnico02  |
+| 117 | CON-004  | CORRECTIVO | PENDIENTE  | —          |
 
-Totales por estatus: PENDIENTE 5 · ASIGNADO 2 · EN_PROCESO 3 · FINALIZADO 4 · CANCELADO 1.
+Totales por estatus: PENDIENTE 6 · ASIGNADO 3 · EN_PROCESO 3 · FINALIZADO 4 · CANCELADO 1.
 Estos números te sirven para validar el dashboard.
+
+`CON-004` solo tiene tickets de `tecnico02`. Sirve para comprobar el filtrado por rol: `tecnico01` y
+`tecnico03` no deben verlo en `GET /api/contracts` y deben recibir `403` en `GET /api/contracts/4`.
 
 ---
 
 ## 5. Paso 1 – Levantar la base de datos
+
+### Antes de que empiece el tiempo
+
+Estos pasos descargan imágenes y dependencias y **no forman parte de la prueba**. Hazlos antes de
+iniciar el cronómetro:
+
+1. Clonar el repositorio y ejecutar `docker compose up -d` (descarga SQL Server, ≈ 1.5 GB).
+2. `cd frontend && npm install`.
+3. Tener instalado el runtime de tu backend (Node, .NET SDK, Python, PHP + Composer, etc.).
+4. Leer este documento, `tests/README.md` y el ejemplo de tu stack en `docs/ejemplos/`.
+
+### Levantar la base
 
 ```bash
 git clone https://github.com/sistemasbacros/prueba-tecnica.git
@@ -275,6 +293,8 @@ Convenciones:
 - Todas las respuestas en JSON (`Content-Type: application/json`).
 - Todos los endpoints excepto `POST /api/auth/login` requieren el header `Authorization: Bearer <token>`.
 - Las fechas se devuelven en formato ISO 8601 (`2026-01-01` para DATE, `2026-09-01T08:30:00` para DATETIME).
+  `FechaSolicitud` es un `DATETIME` sin zona horaria: devuélvelo tal cual está en la base, sin
+  convertirlo a UTC ni agregar sufijo `Z`.
 - Los nombres de propiedades en JSON van en `camelCase`.
 
 ### 6.1 `POST /api/auth/login` — iniciar sesión
@@ -305,7 +325,9 @@ Reglas:
 
 - La contraseña se compara con `PasswordHash` usando **bcrypt**. Nunca se almacena ni se compara en texto plano.
 - El token puede ser JWT (recomendado), sesión con cookie, o cualquier mecanismo razonable. Si usas
-  JWT, el secreto y la expiración salen de variables de entorno.
+  JWT, el secreto y la expiración salen de variables de entorno (`JWT_SECRET`, `JWT_EXPIRES_IN`).
+- Expiración: **8 horas**. Un token expirado o manipulado responde `401`; el frontend entregado
+  cierra la sesión automáticamente al recibirlo.
 - El token debe permitir al backend conocer al menos el `id` y el `rol` del usuario en cada petición.
 
 ### 6.2 `GET /api/contracts` — listado de contratos
@@ -385,7 +407,7 @@ Reglas de negocio que **el backend debe validar**:
 Si lo implementas, devuelve los contadores ya calculados para el usuario autenticado:
 
 ```json
-{ "contratosActivos": 2, "ticketsPendientes": 5, "ticketsEnProceso": 3 }
+{ "contratosActivos": 3, "ticketsPendientes": 6, "ticketsEnProceso": 3 }
 ```
 
 Si no lo implementas, el frontend puede calcular los contadores a partir de `GET /api/contracts` y
@@ -400,6 +422,21 @@ GET  /api/users?rol=TECNICO                            → lista de técnicos ac
 
 Reglas de `assign`: solo a usuarios con rol `TECNICO` y `Activo = 1` (`400` si no), solo sobre tickets
 de contratos `ACTIVO` (`409`), y si el ticket estaba `PENDIENTE` pasa a `ASIGNADO`.
+
+### 6.8 Verificación automática
+
+En `tests/` hay un script que comprueba todo lo anterior con 36 peticiones. **El evaluador usa
+exactamente este script**, así que ejecútalo antes de entregar:
+
+```bash
+bash tests/smoke.sh                 # API en http://localhost:8080/api (en Windows: Git Bash)
+API_URL=http://localhost:3001/api bash tests/smoke.sh
+bash tests/smoke.sh --no-write      # omite los 3 casos que modifican el ticket 107
+```
+
+Objetivo: `FAIL: 0`. Los casos de endpoints deseables se marcan `SKIP` si no existen y no penalizan.
+También hay un `tests/api.http` con las mismas peticiones para REST Client, Postman o Insomnia.
+Detalle en [`tests/README.md`](./tests/README.md).
 
 ---
 
@@ -450,14 +487,15 @@ las mismas pantallas y requisitos.
 ┌────────────────────────────────────────────────┐
 │ Dashboard              Usuario: supervisor  [Salir] │
 ├────────────────────────────────────────────────┤
-│  Contratos activos: 2                          │
-│  Tickets pendientes: 5                         │
+│  Contratos activos: 3                          │
+│  Tickets pendientes: 6                         │
 │  Tickets en proceso: 3                         │
 ├────────────────────────────────────────────────┤
 │ CONTRATOS                                      │
 │  CON-001  Mantenimiento Planta Norte  ACTIVO     │
 │  CON-002  Mantenimiento Planta Sur    ACTIVO     │
 │  CON-003  Mantenimiento Oficinas      FINALIZADO │
+│  CON-004  Mant. Centro de Distribución ACTIVO    │
 └────────────────────────────────────────────────┘
 ```
 
@@ -470,10 +508,10 @@ Valores esperados con los datos iniciales:
 
 | Usuario       | Contratos activos | Tickets pendientes | Tickets en proceso |
 |---------------|------------------:|-------------------:|-------------------:|
-| administrador | 2                 | 5                  | 3                  |
-| supervisor    | 2                 | 5                  | 3                  |
-| tecnico01     | 2 (CON-001 y CON-002 por tener tickets ahí) | 0 | 0 |
-| tecnico02     | 2                 | 0                  | 1                  |
+| administrador | 3                 | 6                  | 3                  |
+| supervisor    | 3                 | 6                  | 3                  |
+| tecnico01     | 2 (CON-001 y CON-002; no ve CON-004) | 0 | 0 |
+| tecnico02     | 3 (CON-001, CON-002 y CON-004) | 0    | 1                  |
 | tecnico03     | 2                 | 0                  | 2                  |
 
 ### 7.3 Detalle del contrato (`/contracts/:id`)
@@ -607,7 +645,8 @@ La seguridad no debe depender del frontend.
 Casos concretos que se probarán:
 
 1. `tecnico01` con su token llama `PATCH /api/tickets/102` (asignado a tecnico02) → `403`.
-2. `tecnico01` llama `GET /api/contracts/1/tickets` → solo los tickets 101 y 104 (no 102, 103, 105 ni 106). Con los datos iniciales todos los técnicos tienen al menos un ticket en cada contrato; el evaluador puede insertar un contrato nuevo sin tickets para comprobar que un técnico recibe `403` en `GET /api/contracts/{id}` y que no aparece en su `GET /api/contracts`.
+2. `tecnico01` llama `GET /api/contracts/1/tickets` → solo los tickets 101 y 104 (no 102, 103, 105 ni 106).
+   `tecnico01` llama `GET /api/contracts` → no aparece `CON-004`; llama `GET /api/contracts/4` → `403`.
 3. `tecnico04` intenta login → rechazado.
 4. Petición a `GET /api/contracts` sin header `Authorization` → `401`.
 5. Petición con token manipulado o expirado → `401`.
@@ -668,7 +707,9 @@ CI/CD, Terraform, registro de usuarios, recuperación de contraseña, diseño vi
 
 1. Sube tu código a un repositorio Git (GitHub, GitLab o Bitbucket) y comparte el enlace.
 2. Haz commits conforme avances. El historial forma parte de la evaluación.
-3. Tu `README.md` (reemplaza el de este repositorio) debe contener **exactamente** estas secciones:
+3. Anota en el README la hora de inicio y de fin. El historial de commits debe ser coherente con ellas.
+4. Ejecuta `bash tests/smoke.sh` y pega el resumen final (`PASS: n FAIL: n`) en el README.
+5. Tu `README.md` (reemplaza el de este repositorio) debe contener **exactamente** estas secciones:
 
 ```markdown
 # Prueba Técnica – Sistema de Mantenimiento
@@ -761,7 +802,9 @@ flujo completo y pequeño vale más que muchas piezas sueltas.
 
 ## 16. Referencia rápida: librerías por lenguaje
 
-Solo orientativo; usa lo que prefieras.
+Solo orientativo; usa lo que prefieras. En [`docs/ejemplos/`](./docs/ejemplos/README.md) hay, para
+Node, .NET, Python y PHP, el `Dockerfile`, la conexión a SQL Server, el login con bcrypt y JWT y el
+middleware de roles listos para copiar.
 
 | Lenguaje / Framework    | Driver SQL Server                         | bcrypt                         | JWT                          |
 |-------------------------|-------------------------------------------|--------------------------------|------------------------------|
@@ -786,9 +829,10 @@ Notas:
 ## 17. Checklist antes de entregar
 
 - [ ] `docker compose down -v && docker compose up -d --build` funciona desde cero en menos de 5 minutos.
+- [ ] `bash tests/smoke.sh` termina con `FAIL: 0`.
 - [ ] Puedo iniciar sesión con `administrador`, `supervisor` y `tecnico01`; `tecnico04` es rechazado.
-- [ ] El dashboard muestra 2 / 5 / 3 para `supervisor`.
-- [ ] `tecnico01` solo ve sus tickets y no puede modificar el ticket 102.
+- [ ] El dashboard muestra 3 / 6 / 3 para `supervisor`.
+- [ ] `tecnico01` no ve `CON-004`, solo ve sus tickets y no puede modificar el ticket 102.
 - [ ] `PATCH /api/tickets/104` responde `409`.
 - [ ] Una petición sin token responde `401`.
 - [ ] Ningún secreto está escrito en el código; existe `.env.example`.
