@@ -42,6 +42,25 @@ Tú desarrollas la API REST y el frontend:
 Base de datos (entregada)  →  API REST (tú)  →  Frontend en React (tú)
 ```
 
+### Qué se espera en 2 horas (perfil senior)
+
+La prueba está dimensionada para un desarrollador senior en un stack que domina. No se espera
+perfección ni que todo esté terminado: **se evalúa qué priorizas y la calidad de lo que entregas.**
+
+Orden de prioridad recomendado. Entrega cada punto funcionando antes de pasar al siguiente:
+
+1. Backend conectado a la base con `mantenimiento_app`, login con bcrypt y token.
+2. Middleware de autenticación y validación de roles en el backend.
+3. Los tres `GET` con el filtrado por rol correcto.
+4. `PATCH /api/tickets/{id}` con sus reglas de negocio.
+5. Los dos `TODO (candidato)` del frontend.
+6. `Dockerfile` del backend y servicios `backend` y `frontend` en el compose.
+7. README con decisiones, lo que faltó y la pregunta final.
+
+Un candidato senior típicamente completa los puntos 1 a 5 y deja el 6 o el 7 parcialmente
+documentados. Un punto a medias pero documentado ("no alcancé a X, lo haría así") puntúa; un punto
+que no arranca, no.
+
 ---
 
 ## 2. Reglas de la prueba
