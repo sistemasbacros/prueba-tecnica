@@ -1,0 +1,54 @@
+# Prueba Técnica - Sistema de Mantenimiento
+# Infraestructura base entregada al candidato: SQL Server + inicialización automática.
+#
+# Uso:
+#   docker compose up -d
+#
+# El candidato debe AGREGAR aquí sus propios servicios `backend` y `frontend`
+# (ver PRUEBA_TECNICA.md).
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mantenimiento-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Bacros2026!Sql}
+    ports:
+      - "${DB_PORT:-1433}:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+  # Ejecuta los scripts de db/init en orden alfabético una vez que SQL Server está sano.
+  # Los scripts son idempotentes: se pueden volver a ejecutar sin duplicar datos.
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mantenimiento-db-init
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Bacros2026!Sql}
+    volumes:
+      - ./db/init:/init:ro
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        for f in /init/*.sql; do
+          echo "==> Ejecutando $$f"
+          /opt/mssql-tools18/bin/sqlcmd -S db -U sa -P "$$MSSQL_SA_PASSWORD" -C -b -i "$$f"
+        done
+        echo "==> Base de datos inicializada correctamente"
+    restart: "no"
+
+volumes:
+  mssql-data:
