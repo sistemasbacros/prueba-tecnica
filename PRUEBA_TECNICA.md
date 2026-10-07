@@ -1,6 +1,6 @@
 # Prueba Técnica – Desarrollador Full Stack
 
-**Duración: 2 horas.**
+**Duración: 1:30 horas.**
 
 Lee este documento completo antes de empezar. Está pensado para que no tengas que adivinar nada:
 todo lo que se evalúa está descrito aquí. Si algo no está especificado, decide tú y anótalo en la
@@ -42,7 +42,7 @@ Tú desarrollas la API REST y el frontend:
 Base de datos (entregada)  →  API REST (tú)  →  Frontend en React (tú)
 ```
 
-### Qué se espera en 2 horas (perfil senior)
+### Qué se espera en 1:30 horas (perfil senior)
 
 La prueba está dimensionada para un desarrollador senior en un stack que domina. No se espera
 perfección ni que todo esté terminado: **se evalúa qué priorizas y la calidad de lo que entregas.**
@@ -75,7 +75,7 @@ que no arranca, no.
 | 6 | La configuración (puertos, cadena de conexión, secreto del token) debe salir de **variables de entorno**. Versiona un `.env.example`; no versiones `.env`. |
 | 7 | Entrega un **repositorio Git** (fork de este o uno nuevo) con commits significativos. No se aceptan archivos comprimidos. |
 | 8 | Puedes usar cualquier recurso (documentación, IA, librerías). Lo que se evalúa es el resultado y que puedas explicarlo. |
-| 9 | Si no terminas todo en 2 horas, entrega lo que tengas funcionando y documenta en el README qué faltó y cómo lo harías. Una entrega parcial bien explicada vale más que una completa que no arranca. |
+| 9 | Si no terminas todo en 1:30 horas, entrega lo que tengas funcionando y documenta en el README qué faltó y cómo lo harías. Una entrega parcial bien explicada vale más que una completa que no arranca. |
 
 ---
 
@@ -639,7 +639,7 @@ Formato único para todos los errores:
 
 ## 11. Alcance: obligatorio vs. deseable
 
-Para 2 horas, esto es lo **obligatorio** (con esto se obtiene la calificación completa):
+Para 1:30 horas, esto es lo **obligatorio** (con esto se obtiene la calificación completa):
 
 - [ ] `docker compose up -d --build` levanta `db`, `backend` y `frontend` sin pasos manuales.
 - [ ] `POST /api/auth/login` con bcrypt y token; rechaza inactivos.
@@ -748,11 +748,11 @@ Interpretación: 90–100 excelente · 80–89 muy bueno · 70–79 cumple · 60
 
 | Tiempo      | Actividad                                                                                   |
 |-------------|---------------------------------------------------------------------------------------------|
-| 0:00 – 0:10 | Levantar la base, conectarte, revisar tablas y datos. Elegir stack. `npm install` en `frontend/`. |
-| 0:10 – 1:05 | Backend: conexión a SQL Server, login con bcrypt + token, middleware de auth/roles, 3 GET, 1 PATCH |
-| 1:05 – 1:30 | Frontend: completar los `TODO (candidato)` (contadores, acciones por rol, PATCH) y probar con los 3 roles |
-| 1:30 – 1:50 | Dockerfile del backend, servicios en compose, probar `docker compose up -d --build` desde cero |
-| 1:50 – 2:00 | README, pregunta final, último commit                                                        |
+| 0:00 – 0:08 | Levantar la base, conectarte, revisar tablas y datos. Elegir stack. `npm install` en `frontend/`. |
+| 0:08 – 0:55 | Backend: conexión a SQL Server, login con bcrypt + token, middleware de auth/roles, 3 GET, 1 PATCH |
+| 0:55 – 1:10 | Frontend: completar los `TODO (candidato)` (contadores, acciones por rol, PATCH) y probar con los 3 roles |
+| 1:10 – 1:22 | Dockerfile del backend, servicios en compose, probar `docker compose up -d --build` desde cero |
+| 1:22 – 1:30 | README, pregunta final, último commit                                                        |
 
 Consejo: haz un commit en cuanto el login funcione de punta a punta. Si te quedas sin tiempo, un
 flujo completo y pequeño vale más que muchas piezas sueltas.

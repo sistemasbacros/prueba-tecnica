@@ -1,6 +1,6 @@
 # Prueba Técnica – Sistema de Mantenimiento
 
-Repositorio base para la prueba técnica de desarrollo Full Stack (**duración: 2 horas**).
+Repositorio base para la prueba técnica de desarrollo Full Stack (**duración: 1:30 horas**).
 
 Este repositorio contiene:
 
@@ -9,6 +9,8 @@ Este repositorio contiene:
 - **Una plantilla de frontend en React** (`frontend/`) con login, rutas, cliente HTTP y componentes,
   para que no empieces desde cero.
 - **El enunciado completo** en [`PRUEBA_TECNICA.md`](./PRUEBA_TECNICA.md). Léelo antes de empezar.
+- **Una guía visual** en [`docs/guia-candidato.html`](./docs/guia-candidato.html) con el mapa conceptual de la
+  arquitectura y qué archivos se modifican. Ábrela en el navegador.
 
 Tú debes desarrollar la **API REST** (lenguaje libre), completar el **frontend** y dejar todo corriendo
 en **tres contenedores** (`db`, `backend`, `frontend`) con `docker compose`.

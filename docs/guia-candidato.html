@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía de la Prueba Técnica</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  /* Layout: hoja de especificación técnica. Una columna de lectura (72ch), mapa SVG a ancho completo,
+     árbol de archivos y tablas en contenedores con scroll horizontal propio. */
+  :root {
+    --bg: #f3f5f7;
+    --surface: #ffffff;
+    --surface-2: #e9edf1;
+    --fg: #1b2430;
+    --muted: #5b6876;
+    --line: #cfd6dd;
+    --accent: #1f5fbf;            /* azul técnico: enlaces y énfasis */
+    --delivered: #1f7a4d;         /* verde: entregado, no se modifica */
+    --delivered-bg: #dff3e7;
+    --build: #c2410c;             /* naranja seguridad: lo construye el candidato */
+    --build-bg: #fde7d9;
+    --todo: #a16207;              /* ámbar: plantilla a completar */
+    --todo-bg: #fdf0c7;
+    --done: #3b5b85;              /* azul gris: plantilla completa, no requiere cambios */
+    --done-bg: #e1e9f4;
+    --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Cascadia Code', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151b; --surface: #171e26; --surface-2: #202934; --fg: #e6ebf0; --muted: #98a6b5; --line: #334150;
+      --accent: #7fb0ff; --delivered: #5fd39a; --delivered-bg: #163626; --build: #ff9a66; --build-bg: #3d2114;
+      --todo: #f2c94c; --todo-bg: #3a2f0e; --done: #9db8dc; --done-bg: #1f2d40; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151b; --surface: #171e26; --surface-2: #202934; --fg: #e6ebf0; --muted: #98a6b5; --line: #334150;
+    --accent: #7fb0ff; --delivered: #5fd39a; --delivered-bg: #163626; --build: #ff9a66; --build-bg: #3d2114;
+    --todo: #f2c94c; --todo-bg: #3a2f0e; --done: #9db8dc; --done-bg: #1f2d40; color-scheme: dark;
+  }
+
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding-block: 2rem 4rem; padding-inline: 16px; }
+  h1, h2, h3 { text-wrap: balance; line-height: 1.2; margin: 0; }
+  h1 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 700; }
+  h2 { font-size: 1.3rem; font-weight: 600; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+  h3 { font-size: 1rem; font-weight: 600; margin-top: 1.5rem; }
+  p { max-width: 72ch; margin: 0.6rem 0; }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  code, .mono { font-family: var(--font-mono); font-size: 0.9em; }
+  code { background: var(--surface-2); padding: 0.08em 0.35em; border-radius: 4px; }
+  pre { background: var(--surface-2); padding: 0.9rem 1rem; border-radius: 6px; overflow-x: auto; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5; margin: 0.75rem 0; }
+  pre code { background: none; padding: 0; }
+  .eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .lead { font-size: 1.05rem; color: var(--muted); max-width: 72ch; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1rem; font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); }
+  .meta strong { color: var(--fg); font-weight: 600; }
+
+  /* Chips de estado: la misma forma en todo el documento */
+  .chip { display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.12rem 0.5rem; border-radius: 3px; white-space: nowrap; vertical-align: middle; }
+  .chip-delivered { background: var(--delivered-bg); color: var(--delivered); }
+  .chip-build { background: var(--build-bg); color: var(--build); }
+  .chip-todo { background: var(--todo-bg); color: var(--todo); }
+  .chip-done { background: var(--done-bg); color: var(--done); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 0.6rem 1.25rem; margin: 1rem 0; font-size: 0.9rem; }
+  .legend span { display: inline-flex; align-items: center; gap: 0.5rem; }
+
+  /* Mapa conceptual */
+  .map { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem; overflow-x: auto; margin-top: 1rem; }
+  .map svg { display: block; min-width: 820px; width: 100%; height: auto; font-family: var(--font-body); }
+  .map .box { stroke-width: 1.5; rx: 8; }
+  .map .box-delivered { fill: var(--delivered-bg); stroke: var(--delivered); }
+  .map .box-build { fill: var(--build-bg); stroke: var(--build); }
+  .map .box-todo { fill: var(--todo-bg); stroke: var(--todo); }
+  .map .box-neutral { fill: var(--surface-2); stroke: var(--line); }
+  .map .compose { fill: none; stroke: var(--muted); stroke-dasharray: 6 5; stroke-width: 1.2; rx: 12; }
+  .map text { fill: var(--fg); font-size: 13px; }
+  .map .t-title { font-weight: 700; font-size: 15px; }
+  .map .t-mono { font-family: var(--font-mono); font-size: 11.5px; fill: var(--muted); }
+  .map .t-tag { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.05em; }
+  .map .t-small { font-size: 12px; fill: var(--muted); }
+  .map .t-delivered { fill: var(--delivered); } .map .t-build { fill: var(--build); } .map .t-todo { fill: var(--todo); }
+  .map .arrow { stroke: var(--fg); stroke-width: 1.6; fill: none; marker-end: url(#arrowhead); }
+  .map .arrow-soft { stroke: var(--muted); stroke-width: 1.2; fill: none; stroke-dasharray: 3 4; marker-end: url(#arrowhead-soft); }
+  .map .file { font-family: var(--font-mono); font-size: 11px; }
+
+  /* Dos columnas: entregamos / implementas */
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.25rem; min-width: 0; }
+  .panel h3 { margin-top: 0; display: flex; align-items: center; gap: 0.6rem; }
+  .panel ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+  .panel li { margin: 0.3rem 0; }
+  .panel-delivered { border-top: 4px solid var(--delivered); }
+  .panel-build { border-top: 4px solid var(--build); }
+  .panel-todo { border-top: 4px solid var(--todo); }
+
+  /* Árbol de archivos */
+  .tree { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.25rem; overflow-x: auto; margin-top: 1rem; }
+  .tree table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.9rem; }
+  .tree td { padding: 0.3rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .tree tr:last-child td { border-bottom: none; }
+  .tree td:first-child { font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+  .tree td:nth-child(2) { white-space: nowrap; }
+  .tree .d1 { padding-left: 1.6rem; } .tree .d2 { padding-left: 3.2rem; } .tree .d3 { padding-left: 4.8rem; }
+  .tree .dir { font-weight: 600; }
+  .tree .what { color: var(--muted); }
+
+  /* Tablas de datos */
+  .tbl { overflow-x: auto; margin-top: 1rem; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+  table.data { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.9rem; }
+  table.data th, table.data td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.data th { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: var(--surface-2); }
+  table.data tr:last-child td { border-bottom: none; }
+  table.data td.mono { font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+  table.data td.num { font-variant-numeric: tabular-nums; text-align: center; }
+  .ok { color: var(--delivered); font-weight: 600; } .no { color: var(--build); font-weight: 600; }
+
+  /* Orden de prioridad (es una secuencia real) */
+  .steps { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: 0.5rem; counter-reset: step; }
+  .steps li { display: grid; grid-template-columns: 2.2rem 1fr auto; gap: 0.75rem; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.6rem 0.9rem; counter-increment: step; }
+  .steps li::before { content: counter(step); font-family: var(--font-mono); font-weight: 600; color: var(--accent); font-size: 1.05rem; }
+  .steps .time { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+  .steps .senior { grid-column: 2 / -1; font-size: 0.85rem; color: var(--muted); }
+  @media (max-width: 520px) { .steps li { grid-template-columns: 2.2rem 1fr; } .steps .time { grid-column: 2; } }
+
+  /* Flujo de una petición */
+  .flow { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; align-items: stretch; }
+  .flow .st { flex: 1 1 150px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.6rem 0.8rem; font-size: 0.88rem; position: relative; }
+  .flow .st .k { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.2rem; }
+  .flow .st.b { border-left: 4px solid var(--build); }
+  .flow .st.t { border-left: 4px solid var(--todo); }
+  .flow .st.d { border-left: 4px solid var(--done); }
+
+  .check { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.4rem; max-width: 72ch; }
+  .check li { display: flex; gap: 0.6rem; align-items: flex-start; }
+  .check li::before { content: ""; flex: 0 0 auto; width: 1rem; height: 1rem; border: 1.5px solid var(--muted); border-radius: 3px; margin-top: 0.2rem; }
+
+  .note { border-left: 4px solid var(--accent); background: var(--surface); padding: 0.75rem 1rem; border-radius: 0 6px 6px 0; margin: 1rem 0; max-width: 72ch; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+  .links a { display: inline-block; padding: 0.5rem 0.9rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); text-decoration: none; font-weight: 500; }
+  @media (prefers-reduced-motion: no-preference) { .links a { transition: border-color 0.15s; } }
+  .links a:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Prueba técnica · Full Stack Senior · 1:30 horas</div>
+    <h1>Sistema de Mantenimiento: contratos y tickets</h1>
+    <p class="lead">Nosotros entregamos la base de datos en Docker y una plantilla de frontend en React. Tú construyes la API REST y completas el frontend. Esta página resume qué recibes, qué debes implementar y en qué archivos. El enunciado completo y obligatorio es <code>PRUEBA_TECNICA.md</code>.</p>
+    <div class="meta">
+      <span>Repositorio: <strong>github.com/sistemasbacros/prueba-tecnica</strong></span>
+      <span>Base: <strong>SQL Server 2022</strong></span>
+      <span>Frontend: <strong>React (plantilla incluida)</strong></span>
+      <span>Backend: <strong>lenguaje libre</strong></span>
+    </div>
+  </header>
+
+  <h2 id="mapa">Mapa conceptual</h2>
+  <p>Tres contenedores orquestados por <code>docker-compose.yml</code>. El color indica quién hace cada parte.</p>
+  <div class="legend">
+    <span><span class="chip chip-delivered">Entregado</span> no se modifica</span>
+    <span><span class="chip chip-build">Tú lo creas</span> desde cero</span>
+    <span><span class="chip chip-todo">Completar</span> plantilla con TODO</span>
+    <span><span class="chip chip-done">Completo</span> plantilla, sin cambios</span>
+  </div>
+
+  <div class="map">
+    <svg viewBox="0 0 980 540" role="img" aria-label="Mapa de la arquitectura: navegador, frontend React, API REST y SQL Server dentro de docker compose, con los archivos que corresponden a cada parte">
+      <defs>
+        <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" style="color: var(--fg)"></path>
+        </marker>
+        <marker id="arrowhead-soft" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" style="color: var(--muted)"></path>
+        </marker>
+      </defs>
+
+      <!-- Contorno docker compose -->
+      <rect class="compose" x="190" y="30" width="775" height="300"></rect>
+      <text x="206" y="52" class="t-mono">docker-compose.yml · red interna de compose · 3 servicios</text>
+
+      <!-- Navegador -->
+      <rect class="box box-neutral" x="20" y="120" width="130" height="110"></rect>
+      <text x="85" y="152" text-anchor="middle" class="t-title">Navegador</text>
+      <text x="85" y="174" text-anchor="middle" class="t-small">Candidato y</text>
+      <text x="85" y="190" text-anchor="middle" class="t-small">evaluador</text>
+      <text x="85" y="214" text-anchor="middle" class="t-mono">localhost:3000</text>
+
+      <!-- Frontend -->
+      <rect class="box box-todo" x="210" y="80" width="220" height="190"></rect>
+      <text x="320" y="108" text-anchor="middle" class="t-title">FRONTEND</text>
+      <text x="320" y="126" text-anchor="middle" class="t-small">React + Vite + nginx</text>
+      <text x="320" y="150" text-anchor="middle" class="t-tag t-todo">PLANTILLA · COMPLETAR 2 TODO</text>
+      <text x="226" y="178" class="file">pages/DashboardPage.jsx</text>
+      <text x="226" y="194" class="file">pages/ContractDetailPage.jsx</text>
+      <text x="226" y="218" class="t-small">Login, rutas, cliente HTTP,</text>
+      <text x="226" y="234" class="t-small">tablas y Dockerfile ya listos</text>
+      <text x="320" y="258" text-anchor="middle" class="t-mono">contenedor frontend · :3000</text>
+
+      <!-- Backend -->
+      <rect class="box box-build" x="490" y="80" width="220" height="190"></rect>
+      <text x="600" y="108" text-anchor="middle" class="t-title">API REST</text>
+      <text x="600" y="126" text-anchor="middle" class="t-small">Lenguaje y framework libres</text>
+      <text x="600" y="150" text-anchor="middle" class="t-tag t-build">TÚ LO CREAS DESDE CERO</text>
+      <text x="506" y="178" class="file">backend/Dockerfile</text>
+      <text x="506" y="194" class="file">backend/.env.example</text>
+      <text x="506" y="210" class="file">backend/… (tu código)</text>
+      <text x="506" y="234" class="t-small">Login bcrypt + token, roles,</text>
+      <text x="506" y="250" class="t-small">3 GET y 1 PATCH</text>
+      <text x="600" y="262" text-anchor="middle" class="t-mono">contenedor backend · :8080</text>
+
+      <!-- DB -->
+      <rect class="box box-delivered" x="770" y="80" width="175" height="190"></rect>
+      <text x="857" y="108" text-anchor="middle" class="t-title">SQL SERVER</text>
+      <text x="857" y="126" text-anchor="middle" class="t-small">MantenimientoDB</text>
+      <text x="857" y="150" text-anchor="middle" class="t-tag t-delivered">ENTREGADO · NO MODIFICAR</text>
+      <text x="786" y="178" class="file">db/init/01-schema.sql</text>
+      <text x="786" y="194" class="file">db/init/02-seed.sql</text>
+      <text x="786" y="218" class="t-small">Usuarios · Contratos · Tickets</text>
+      <text x="786" y="234" class="t-small">6 · 3 · 15 registros</text>
+      <text x="857" y="258" text-anchor="middle" class="t-mono">contenedor db · :1433</text>
+
+      <!-- Flechas principales -->
+      <path class="arrow" d="M150,175 L208,175"></path>
+      <text x="179" y="166" text-anchor="middle" class="t-mono">HTTP</text>
+
+      <path class="arrow" d="M430,175 L488,175"></path>
+      <text x="459" y="160" text-anchor="middle" class="t-mono">HTTP/JSON</text>
+      <text x="459" y="192" text-anchor="middle" class="t-mono">Bearer token</text>
+
+      <path class="arrow" d="M710,175 L768,175"></path>
+      <text x="739" y="160" text-anchor="middle" class="t-mono">SQL · TDS</text>
+      <text x="739" y="192" text-anchor="middle" class="t-mono">mantenimiento_app</text>
+
+      <!-- Servicios de compose a agregar -->
+      <text x="320" y="300" text-anchor="middle" class="t-tag t-build">+ servicio frontend en compose</text>
+      <text x="600" y="300" text-anchor="middle" class="t-tag t-build">+ servicio backend en compose</text>
+      <text x="857" y="300" text-anchor="middle" class="t-tag t-delivered">servicios db y db-init ya existen</text>
+
+      <!-- Fila inferior: documentos -->
+      <rect class="box box-neutral" x="20" y="370" width="300" height="140"></rect>
+      <text x="36" y="396" class="t-title">Documentación que recibes</text>
+      <text x="36" y="420" class="file">PRUEBA_TECNICA.md</text>
+      <text x="190" y="420" class="t-small">enunciado completo y rúbrica</text>
+      <text x="36" y="440" class="file">README.md</text>
+      <text x="190" y="440" class="t-small">arranque, credenciales, errores</text>
+      <text x="36" y="460" class="file">frontend/src/api/client.js</text>
+      <text x="190" y="460" class="t-small">endpoints exactos a exponer</text>
+      <text x="36" y="480" class="file">backend/README.md</text>
+      <text x="190" y="480" class="t-small">resumen de endpoints</text>
+
+      <rect class="box box-build" x="350" y="370" width="300" height="140"></rect>
+      <text x="366" y="396" class="t-title">Documentación que entregas</text>
+      <text x="366" y="420" class="file">README.md (el tuyo)</text>
+      <text x="366" y="440" class="t-small">Tecnologías y por qué · Ejecución · Endpoints</text>
+      <text x="366" y="458" class="t-small">Arquitectura · Decisiones y supuestos</text>
+      <text x="366" y="476" class="t-small">Qué faltó · Escalabilidad (pregunta final)</text>
+      <text x="366" y="498" class="t-mono">+ historial de commits significativo</text>
+
+      <rect class="box box-neutral" x="680" y="370" width="285" height="140"></rect>
+      <text x="696" y="396" class="t-title">Cómo lo evaluamos</text>
+      <text x="696" y="420" class="t-small">1. docker compose up -d --build desde cero</text>
+      <text x="696" y="438" class="t-small">2. Login con los 3 roles y con tecnico04</text>
+      <text x="696" y="456" class="t-small">3. Permisos con curl: 401 · 403 · 409</text>
+      <text x="696" y="474" class="t-small">4. Lectura de código y Dockerfiles</text>
+      <text x="696" y="492" class="t-small">5. README y respuesta de escalabilidad</text>
+
+      <!-- Flechas suaves de documentación hacia componentes -->
+      <path class="arrow-soft" d="M320,400 C 340,380 340,330 320,290"></path>
+      <path class="arrow-soft" d="M500,370 C 520,340 560,320 590,290"></path>
+    </svg>
+  </div>
+
+  <h2 id="flujo">Cómo fluye una petición</h2>
+  <p>El token lo genera y valida tu backend. El frontend solo lo guarda y lo reenvía. La seguridad nunca depende del navegador.</p>
+  <div class="flow">
+    <div class="st d"><span class="k">1 · Frontend (listo)</span>LoginPage envía usuario y contraseña a <code>POST /api/auth/login</code>.</div>
+    <div class="st b"><span class="k">2 · Backend (tú)</span>Compara con el hash bcrypt, rechaza inactivos, firma el token con el secreto del <code>.env</code>.</div>
+    <div class="st d"><span class="k">3 · Frontend (listo)</span>AuthContext guarda <code>{ token, user }</code>; client.js añade <code>Authorization: Bearer</code> a todo.</div>
+    <div class="st b"><span class="k">4 · Backend (tú)</span>Middleware valida el token, extrae id y rol, y filtra en SQL según el rol. Sin permiso: 403.</div>
+    <div class="st t"><span class="k">5 · Frontend (completar)</span>Dashboard cuenta tickets; Detalle muestra acciones por rol y llama a <code>PATCH</code>.</div>
+  </div>
+
+  <h2 id="archivos">Archivos: qué se modifica y qué no</h2>
+  <p>Cada archivo de la plantilla empieza con un bloque <code>PARA EL CANDIDATO</code> que indica su estado. Busca <code>TODO (candidato)</code> para ir directo a lo que falta.</p>
+  <div class="tree">
+    <table>
+      <tr><td class="dir">docker-compose.yml</td><td><span class="chip chip-build">Agregar servicios</span></td><td class="what">Añade <code>backend</code> y <code>frontend</code>. El servicio <code>db</code> no se toca.</td></tr>
+      <tr><td>.env.example</td><td><span class="chip chip-build">Ampliar</span></td><td class="what">Agrega las variables de tu backend (secreto del token, puerto).</td></tr>
+      <tr><td class="dir">db/</td><td></td><td></td></tr>
+      <tr><td class="d1">init/01-schema.sql</td><td><span class="chip chip-delivered">Entregado</span></td><td class="what">Base, login <code>mantenimiento_app</code>, tablas, índices. No se modifica.</td></tr>
+      <tr><td class="d1">init/02-seed.sql</td><td><span class="chip chip-delivered">Entregado</span></td><td class="what">Usuarios con bcrypt, contratos y tickets. No se modifica.</td></tr>
+      <tr><td class="d1">init/03-*.sql</td><td><span class="chip chip-build">Opcional</span></td><td class="what">Solo si necesitas vistas o índices extra. Explícalo en tu README.</td></tr>
+      <tr><td class="dir">backend/</td><td><span class="chip chip-build">Tú lo creas</span></td><td class="what">Tu API completa. Solo hay un README con el resumen de endpoints.</td></tr>
+      <tr><td class="d1">Dockerfile</td><td><span class="chip chip-build">Crear</span></td><td class="what">Imagen de tu API. Multi-stage y sin secretos horneados.</td></tr>
+      <tr><td class="d1">.env.example</td><td><span class="chip chip-build">Crear</span></td><td class="what">DB_HOST=db, DB_USER=mantenimiento_app, JWT_SECRET, PORT…</td></tr>
+      <tr><td class="dir">frontend/</td><td><span class="chip chip-todo">Plantilla</span></td><td class="what">React + Vite. Ya compila y ya tiene Dockerfile.</td></tr>
+      <tr><td class="d1">Dockerfile · nginx.conf · .env.example</td><td><span class="chip chip-done">Completo</span></td><td class="what">Build multi-stage y nginx con fallback SPA. Proxy a <code>/api</code> opcional.</td></tr>
+      <tr><td class="d1">src/api/client.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Cliente HTTP con token. Su cabecera lista los endpoints que tu backend debe exponer.</td></tr>
+      <tr><td class="d1">src/context/AuthContext.jsx</td><td><span class="chip chip-done">Completo</span></td><td class="what">Sesión, login, logout y cierre automático ante 401.</td></tr>
+      <tr><td class="d1">src/pages/LoginPage.jsx</td><td><span class="chip chip-done">Completo</span></td><td class="what">Funciona en cuanto tu login responda con <code>{ token, user }</code>.</td></tr>
+      <tr><td class="d1">src/pages/DashboardPage.jsx</td><td><span class="chip chip-todo">Completar</span></td><td class="what">En <code>load()</code>: contadores de tickets pendientes y en proceso para el usuario.</td></tr>
+      <tr><td class="d1">src/pages/ContractDetailPage.jsx</td><td><span class="chip chip-todo">Completar</span></td><td class="what"><code>getAvailableActions</code> (botones por rol y estatus) y <code>handleChangeStatus</code> (PATCH, refrescar, mostrar 403/409).</td></tr>
+      <tr><td class="d1">src/components/*</td><td><span class="chip chip-done">Completo</span></td><td class="what">Layout, ProtectedRoute, ContractList, TicketTable, StatCard, StatusBadge, Feedback.</td></tr>
+      <tr><td class="d1">src/utils/format.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Constantes ROLES y TICKET_STATUS, etiquetas y formato de fechas. Úsalas en tus reglas.</td></tr>
+      <tr><td>README.md</td><td><span class="chip chip-build">Reemplazar</span></td><td class="what">Lo sustituyes por el tuyo con las secciones de PRUEBA_TECNICA.md §12.</td></tr>
+    </table>
+  </div>
+
+  <h2 id="entregas">Qué recibes y qué implementas</h2>
+  <div class="cols">
+    <div class="panel panel-delivered">
+      <h3><span class="chip chip-delivered">Entregado</span> Listo para usar</h3>
+      <ul>
+        <li>SQL Server 2022 en Docker con inicialización automática e idempotente.</li>
+        <li>Base <code>MantenimientoDB</code> con Usuarios, Contratos y Tickets, claves, CHECK e índices.</li>
+        <li>6 usuarios con contraseña bcrypt (uno inactivo), 3 contratos, 15 tickets.</li>
+        <li>Login de base de datos <code>mantenimiento_app</code> con permisos mínimos.</li>
+        <li>Plantilla React que compila, con login funcional, rutas protegidas, cliente HTTP, tablas y Dockerfile.</li>
+      </ul>
+    </div>
+    <div class="panel panel-build">
+      <h3><span class="chip chip-build">Tú lo creas</span> Backend</h3>
+      <ul>
+        <li>Conexión a SQL Server con <code>mantenimiento_app</code> (no <code>sa</code>) y consultas parametrizadas.</li>
+        <li><code>POST /api/auth/login</code> con bcrypt y token; rechaza usuarios inactivos.</li>
+        <li>Middleware de autenticación y validación de roles en cada endpoint.</li>
+        <li>3 GET de contratos y tickets filtrados por rol, 1 PATCH con reglas de negocio.</li>
+        <li>Errores con formato único y códigos 400 · 401 · 403 · 404 · 409 · 500.</li>
+        <li>Dockerfile y servicio en compose; configuración por variables de entorno.</li>
+      </ul>
+    </div>
+    <div class="panel panel-todo">
+      <h3><span class="chip chip-todo">Completar</span> Frontend</h3>
+      <ul>
+        <li>Dashboard: contadores de tickets pendientes y en proceso.</li>
+        <li>Detalle: botones por rol y estatus, llamada al PATCH, refresco y errores 403/409.</li>
+        <li>Servicio <code>frontend</code> en compose con el build arg <code>VITE_API_URL</code>.</li>
+        <li>Probar con los tres roles y con <code>tecnico04</code>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="endpoints">Endpoints que debe exponer tu API</h2>
+  <p>Rutas, cuerpos y respuestas exactos. La plantilla ya los consume así. El detalle con ejemplos JSON está en <code>PRUEBA_TECNICA.md</code> §6 y en la cabecera de <code>frontend/src/api/client.js</code>.</p>
+  <div class="tbl">
+    <table class="data">
+      <thead><tr><th>Método</th><th>Ruta</th><th>Quién</th><th>Qué hace</th><th>Obligatorio</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">POST</td><td class="mono">/api/auth/login</td><td>todos</td><td>Devuelve <code>{ token, user }</code>. 401 si falla o el usuario está inactivo.</td><td class="num ok">Sí</td></tr>
+        <tr><td class="mono">GET</td><td class="mono">/api/contracts</td><td>todos</td><td>Contratos visibles. Técnico: solo donde tiene tickets asignados.</td><td class="num ok">Sí</td></tr>
+        <tr><td class="mono">GET</td><td class="mono">/api/contracts/{id}</td><td>todos</td><td>Detalle. 403 si el técnico no tiene acceso, 404 si no existe.</td><td class="num ok">Sí</td></tr>
+        <tr><td class="mono">GET</td><td class="mono">/api/contracts/{id}/tickets</td><td>todos</td><td>Tickets del contrato. Técnico: solo los suyos.</td><td class="num ok">Sí</td></tr>
+        <tr><td class="mono">PATCH</td><td class="mono">/api/tickets/{id}</td><td>todos</td><td>Cambia <code>estatus</code>. 400 valor inválido · 403 técnico ajeno · 409 cerrado o transición inválida.</td><td class="num ok">Sí</td></tr>
+        <tr><td class="mono">GET</td><td class="mono">/api/dashboard</td><td>todos</td><td>Contadores ya calculados para el usuario.</td><td class="num">deseable</td></tr>
+        <tr><td class="mono">POST</td><td class="mono">/api/tickets/{id}/assign</td><td>admin, supervisor</td><td>Asigna un técnico activo. PENDIENTE pasa a ASIGNADO.</td><td class="num">deseable</td></tr>
+        <tr><td class="mono">GET</td><td class="mono">/api/users?rol=TECNICO</td><td>admin, supervisor</td><td>Técnicos activos. Nunca devolver <code>passwordHash</code>.</td><td class="num">deseable</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Transiciones de estatus permitidas en el PATCH</h3>
+  <div class="tbl">
+    <table class="data">
+      <thead><tr><th>Estatus actual</th><th>Puede pasar a</th><th>Acciones en pantalla</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">PENDIENTE · ASIGNADO</td><td class="mono">EN_PROCESO · CANCELADO</td><td>Iniciar · Cancelar</td></tr>
+        <tr><td class="mono">EN_PROCESO</td><td class="mono">FINALIZADO · CANCELADO</td><td>Finalizar · Cancelar</td></tr>
+        <tr><td class="mono">FINALIZADO · CANCELADO</td><td>ninguno (409)</td><td>sin acciones</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="roles">Roles: lo que valida el backend</h2>
+  <div class="tbl">
+    <table class="data">
+      <thead><tr><th>Acción</th><th>Administrador</th><th>Supervisor</th><th>Técnico</th></tr></thead>
+      <tbody>
+        <tr><td>Ver contratos</td><td class="num ok">todos</td><td class="num ok">todos</td><td class="num">solo con tickets suyos</td></tr>
+        <tr><td>Ver tickets de un contrato</td><td class="num ok">todos</td><td class="num ok">todos</td><td class="num">solo los suyos</td></tr>
+        <tr><td>Cambiar estatus de ticket</td><td class="num ok">cualquiera</td><td class="num ok">cualquiera</td><td class="num">solo los suyos</td></tr>
+        <tr><td>Asignar ticket (deseable)</td><td class="num ok">sí</td><td class="num ok">sí</td><td class="num no">403</td></tr>
+        <tr><td>Ver usuarios (deseable)</td><td class="num ok">sí</td><td class="num ok">sí</td><td class="num no">403</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">Ocultar un botón en React no es seguridad. El evaluador hará las peticiones con curl: un técnico haciendo PATCH al ticket 102 debe recibir 403, y cualquier PATCH al ticket 104 (finalizado) debe recibir 409.</div>
+
+  <h2 id="prioridad">Orden de trabajo sugerido</h2>
+  <p>No se espera terminar todo. Se evalúa qué priorizas y la calidad de lo que entregas. Avanza en este orden y haz commit en cuanto cada punto funcione.</p>
+  <ol class="steps">
+    <li><div>Levantar la base, conectarte, revisar datos. <code>npm install</code> en <code>frontend/</code>.</div><span class="time">0:00 – 0:08</span></li>
+    <li><div>Backend: conexión con <code>mantenimiento_app</code>, login con bcrypt y token.</div><span class="time">0:08 – 0:28</span></li>
+    <li><div>Middleware de autenticación y roles. Los 3 GET filtrados por rol.</div><span class="time">0:28 – 0:45</span></li>
+    <li><div><code>PATCH /api/tickets/{id}</code> con transiciones y permisos.</div><span class="time">0:45 – 0:55</span></li>
+    <li><div>Frontend: los dos <code>TODO (candidato)</code>. Probar con los tres roles.</div><span class="time">0:55 – 1:10</span></li>
+    <li><div>Dockerfile del backend, servicios en compose, <code>docker compose up -d --build</code> desde cero.</div><span class="time">1:10 – 1:22</span></li>
+    <li><div>README: decisiones, lo que faltó y la pregunta de escalabilidad. Último commit.</div><span class="time">1:22 – 1:30</span></li>
+  </ol>
+  <div class="note">Un candidato senior suele completar los puntos 1 a 5 y dejar el 6 o el 7 parcialmente documentados. Un punto a medias pero explicado ("no alcancé X, lo haría así") puntúa; un punto que no arranca, no.</div>
+
+  <h2 id="credenciales">Credenciales</h2>
+  <div class="cols">
+    <div class="panel">
+      <h3>Usuarios de la aplicación</h3>
+      <div class="tbl" style="margin-top:0.5rem">
+        <table class="data" style="min-width:0">
+          <thead><tr><th>Usuario</th><th>Contraseña</th><th>Rol</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">administrador</td><td class="mono">Admin2026!</td><td>ADMINISTRADOR</td></tr>
+            <tr><td class="mono">supervisor</td><td class="mono">Supervisor2026!</td><td>SUPERVISOR</td></tr>
+            <tr><td class="mono">tecnico01 · 02 · 03</td><td class="mono">Tecnico2026!</td><td>TECNICO</td></tr>
+            <tr><td class="mono">tecnico04</td><td class="mono">Tecnico2026!</td><td>TECNICO <span class="no">inactivo</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>SQL Server (para tu backend)</h3>
+      <div class="tbl" style="margin-top:0.5rem">
+        <table class="data" style="min-width:0">
+          <thead><tr><th>Login</th><th>Contraseña</th><th>Uso</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">mantenimiento_app</td><td class="mono">App2026!Mant</td><td><span class="ok">úsalo en la API</span></td></tr>
+            <tr><td class="mono">sa</td><td class="mono">Bacros2026!Sql</td><td>solo administración</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <pre><code>Server=db,1433;Database=MantenimientoDB;
+User Id=mantenimiento_app;Password=App2026!Mant;
+TrustServerCertificate=True;</code></pre>
+    </div>
+  </div>
+
+  <h2 id="arranque">Arranque</h2>
+  <pre><code>git clone https://github.com/sistemasbacros/prueba-tecnica.git
+cd prueba-tecnica
+docker compose up -d            # SQL Server + datos (db-init termina en Exited 0)
+docker compose logs db-init     # "Base de datos inicializada correctamente"
+
+cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:5173 (desarrollo)</code></pre>
+  <p>Al entregar, el evaluador ejecutará únicamente <code>docker compose up -d --build</code> y abrirá el navegador.</p>
+
+  <h2 id="checklist">Antes de entregar</h2>
+  <ul class="check">
+    <li><code>docker compose down -v &amp;&amp; docker compose up -d --build</code> funciona desde cero.</li>
+    <li>administrador, supervisor y tecnico01 entran; tecnico04 es rechazado.</li>
+    <li>El dashboard muestra 2 contratos activos, 5 pendientes y 3 en proceso para supervisor.</li>
+    <li>tecnico01 solo ve sus tickets y recibe 403 al modificar el ticket 102.</li>
+    <li>PATCH al ticket 104 responde 409. Petición sin token responde 401.</li>
+    <li>Ningún secreto en el código; existe <code>.env.example</code>.</li>
+    <li>README con todas las secciones y la pregunta de escalabilidad respondida.</li>
+    <li>Sin <code>node_modules</code>, <code>vendor</code>, <code>bin/obj</code> ni <code>.env</code> en el repositorio.</li>
+  </ul>
+
+  <div class="links">
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/README.md">README del repositorio</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/frontend/src/api/client.js">Endpoints en client.js</a>
+  </div>
+
+</div>
+</body>
+</html>
