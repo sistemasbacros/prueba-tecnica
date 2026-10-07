@@ -1,6 +1,15 @@
 import StatusBadge from './StatusBadge.jsx';
 import { formatDate, typeLabel } from '../utils/format.js';
 
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ *
+ * El candidato debe implementar en esta sección: nada. Los botones de la
+ * columna "Acciones" se definen desde ContractDetailPage.jsx a través de la
+ * prop `renderActions`; ahí es donde va la lógica por rol y estatus.
+ * ===================================================================== */
+
 /**
  * Tabla de tickets de un contrato.
  *

@@ -1,3 +1,11 @@
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ * Usar las constantes ROLES y TICKET_STATUS en lugar de cadenas sueltas
+ * al implementar las reglas en ContractDetailPage.jsx.
+ * ===================================================================== */
+
 /** Utilidades de formato y catálogos de la aplicación. */
 
 export const ROLES = {

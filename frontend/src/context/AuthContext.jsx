@@ -1,6 +1,21 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { api, session } from '../api/client.js';
 
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ *
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ *
+ * Solo debe modificarlo si:
+ *   - Su backend devuelve el login con otra forma que no sea { token, user }
+ *     (lo recomendado es ajustar el backend, no este archivo).
+ *   - Elige autenticación por cookie/sesión en lugar de token: en ese caso
+ *     debe quitar el guardado del token en `login()` y agregar
+ *     `credentials: 'include'` en api/client.js.
+ *   - Quiere manejar la expiración del token en el frontend (opcional).
+ * ===================================================================== */
+
 /**
  * Contexto de autenticación.
  *

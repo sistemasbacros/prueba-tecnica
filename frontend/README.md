@@ -46,14 +46,17 @@ src/
     └── ContractDetailPage.jsx ⚠ TODO: acciones por rol/estatus y llamada a PATCH
 ```
 
-## Qué debes completar
+## Qué debe implementar el candidato
 
-Busca `TODO (candidato)` en el código:
+Cada archivo empieza con un bloque `PARA EL CANDIDATO` que indica si está **COMPLETO** o si
+**REQUIERE IMPLEMENTACIÓN**, y describe exactamente qué debe hacerse. Busca `TODO (candidato)`:
 
-| Archivo                       | Qué falta                                                                      |
-|-------------------------------|--------------------------------------------------------------------------------|
-| `pages/DashboardPage.jsx`     | Calcular `ticketsPendientes` y `ticketsEnProceso` para el usuario autenticado. |
-| `pages/ContractDetailPage.jsx`| `getAvailableActions` (reglas por rol y estatus) y `handleChangeStatus` (llamar a `PATCH /api/tickets/{id}`, refrescar, mostrar errores 403/409). |
+| Archivo                        | El candidato debe implementar                                                                                                   |
+|--------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| `pages/DashboardPage.jsx`      | En `load()`: el cálculo de `ticketsPendientes` y `ticketsEnProceso` para el usuario autenticado (vía `GET /api/dashboard` o contando los tickets de cada contrato). |
+| `pages/ContractDetailPage.jsx` | `getAvailableActions(ticket, user)`: qué botones ver según rol y estatus. `handleChangeStatus(ticket, estatus)`: llamar a `PATCH /api/tickets/{id}`, refrescar la tabla y mostrar los errores `403`/`409` del backend. |
 
-Todo lo demás (login, rutas protegidas, cliente HTTP con token, cierre de sesión en 401,
-tablas, estados de carga y error) ya funciona contra la API descrita en `PRUEBA_TECNICA.md`.
+Los demás archivos están completos (login, rutas protegidas, cliente HTTP con token, cierre de sesión
+en 401, tablas, badges, estados de carga y error) y funcionan contra la API descrita en
+`PRUEBA_TECNICA.md`. En `src/api/client.js` está el listado completo de endpoints que el backend
+debe exponer, con cuerpos, respuestas y códigos HTTP.

@@ -1,3 +1,11 @@
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ * Usar <Loading /> mientras se cargan datos y <ErrorMessage error={err} />
+ * para mostrar errores de la API (muestra `err.message`).
+ * ===================================================================== */
+
 /** Indicadores de carga y error reutilizables. */
 
 export function Loading({ text = 'Cargando…' }) {

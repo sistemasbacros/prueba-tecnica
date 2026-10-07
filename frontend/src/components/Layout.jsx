@@ -1,7 +1,13 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
-/** Cabecera común (título, usuario, cerrar sesión) + contenido de la página. */
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ * ===================================================================== */
+
+/** Cabecera común (título, usuario y rol, botón Salir) + contenido de la página. */
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

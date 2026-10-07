@@ -1,3 +1,20 @@
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ *
+ * El candidato debe implementar en esta sección: nada en el frontend.
+ * Lo que sí debe hacer es implementar EN SU BACKEND los endpoints listados
+ * más abajo, con exactamente esas rutas, cuerpos y respuestas, porque las
+ * funciones de `api` ya los consumen tal cual.
+ *
+ * Solo debe modificar este archivo si:
+ *   - Su API no corre en http://localhost:8080/api → cambiar VITE_API_URL
+ *     en frontend/.env (desarrollo) y en docker-compose.yml (build arg).
+ *   - Usa autenticación por cookie en lugar de token → agregar
+ *     `credentials: 'include'` al fetch y quitar el header Authorization.
+ *   - Implementa los endpoints deseables con otra ruta → ajustar `api.*`.
+ * ===================================================================== */
+
 /**
  * Cliente HTTP centralizado.
  *

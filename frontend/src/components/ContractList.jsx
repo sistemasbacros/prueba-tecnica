@@ -2,6 +2,12 @@ import { Link } from 'react-router-dom';
 import StatusBadge from './StatusBadge.jsx';
 import { formatDate } from '../utils/format.js';
 
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ * ===================================================================== */
+
 /**
  * Tabla de contratos. Cada fila enlaza al detalle.
  * @param {{ contracts: Array<{id:number, numero:string, nombre:string, fechaInicio:string, fechaFin:string, estatus:string}> }} props

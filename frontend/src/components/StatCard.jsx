@@ -1,4 +1,10 @@
-/** Tarjeta de indicador para el dashboard. */
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ * ===================================================================== */
+
+/** Tarjeta de indicador para el dashboard. `tone`: neutral | info | warning | success. */
 export default function StatCard({ label, value, tone = 'neutral' }) {
   return (
     <div className={`stat-card stat-${tone}`}>

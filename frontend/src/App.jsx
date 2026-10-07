@@ -5,6 +5,15 @@ import LoginPage from './pages/LoginPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import ContractDetailPage from './pages/ContractDetailPage.jsx';
 
+/* =====================================================================
+ * PARA EL CANDIDATO
+ * Estado del archivo: COMPLETO. No es necesario modificarlo.
+ *
+ * El candidato debe implementar en esta sección: nada obligatorio.
+ * Solo debe agregar rutas aquí si crea pantallas nuevas (por ejemplo una
+ * pantalla de asignación de técnicos, que es opcional).
+ * ===================================================================== */
+
 /**
  * Rutas de la aplicación.
  *
