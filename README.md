@@ -23,6 +23,21 @@ en **tres contenedores** (`db`, `backend`, `frontend`) con `docker compose`.
 - Un servidor de archivos estáticos (`npx serve`, `python -m http.server` o Live Server) si quieres ejecutar el frontend fuera de Docker. La plantilla no necesita `npm install` ni build.
 - El runtime de tu backend (Node, .NET, PHP, Python, etc.) si lo desarrollas fuera de Docker.
 
+### Si tu equipo no soporta Docker: GitHub Codespaces
+
+El repositorio incluye `.devcontainer/devcontainer.json`. En GitHub pulsa **Code → Codespaces →
+Create codespace on `feature/frontend-vanilla`** y obtendrás un entorno Linux en el navegador con Docker,
+Docker Compose, Node, .NET, Python, Java, PHP y Go ya instalados. Las cuentas personales tienen
+60 horas gratuitas al mes; la prueba usa menos de 2.
+
+- La prueba es la misma: `docker compose up -d`, tu backend, tu frontend y `bash tests/smoke.sh` se
+  ejecutan en la terminal del codespace. Al crearlo se descarga sola la imagen de SQL Server.
+- Los puertos `1433`, `8080` y `3000` se reenvían automáticamente. Abre el frontend desde la pestaña
+  **Ports** (la URL tiene la forma `https://<nombre>-3000.app.github.dev`).
+- El navegador **no** puede llegar a `http://localhost:8080` del codespace. Activa el proxy `/api`
+  que viene comentado en `frontend/nginx.conf` y usa `/api` como URL de la API (recomendado), o marca
+  el puerto `8080` como **Public** en la pestaña Ports y usa su URL `https://<nombre>-8080.app.github.dev/api`.
+
 ## Antes de que empiece el tiempo
 
 Descarga imágenes y dependencias antes de iniciar el cronómetro; no forman parte de la prueba:
