@@ -1,0 +1,46 @@
+{
+  "name": "Prueba tecnica Bacros - frontend vue",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "forwardPorts": [
+    1433,
+    8080,
+    3000,
+    5173
+  ],
+  "portsAttributes": {
+    "1433": {
+      "label": "SQL Server",
+      "onAutoForward": "silent"
+    },
+    "8080": {
+      "label": "API (backend)",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Frontend (contenedor nginx)",
+      "onAutoForward": "openBrowser"
+    },
+    "5173": {
+      "label": "Frontend (Vite, desarrollo)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "docker compose pull db || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-mssql.mssql",
+        "humao.rest-client"
+      ]
+    }
+  }
+}
