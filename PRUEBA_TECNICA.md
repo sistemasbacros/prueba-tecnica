@@ -16,7 +16,7 @@ sección "Decisiones y supuestos" de tu README.
 4. [Base de datos (entregada)](#4-base-de-datos-entregada)
 5. [Paso 1 – Levantar la base de datos](#5-paso-1--levantar-la-base-de-datos)
 6. [Paso 2 – API REST](#6-paso-2--api-rest)
-7. [Paso 3 – Frontend en React](#7-paso-3--frontend-en-react)
+7. [Paso 3 – Frontend (React, Vue o JS vanilla)](#7-paso-3--frontend-react-vue-o-js-vanilla)
 8. [Paso 4 – Contenedores y docker-compose](#8-paso-4--contenedores-y-docker-compose)
 9. [Roles y permisos](#9-roles-y-permisos)
 10. [Manejo de errores](#10-manejo-de-errores)
@@ -39,7 +39,7 @@ Nosotros entregamos la base de datos ya construida (SQL Server en Docker, con ta
 Tú desarrollas la API REST y el frontend:
 
 ```
-Base de datos (entregada)  →  API REST (tú)  →  Frontend en React (tú)
+Base de datos (entregada)  →  API REST (tú)  →  Frontend (tú, con plantilla React, Vue o JS vanilla)
 ```
 
 ### Qué se espera en 1:30 horas (perfil senior)
@@ -68,7 +68,7 @@ que no arranca, no.
 | # | Regla |
 |---|-------|
 | 1 | **Backend:** lenguaje y framework de libre elección (Node, .NET, PHP/Laravel, Python, Java, Go, Rust, etc.). Justifica brevemente tu elección en el README. |
-| 2 | **Frontend:** obligatoriamente en **React**. En `frontend/` hay una plantilla (Vite + React Router) con login, rutas, cliente HTTP y componentes ya hechos; úsala o reemplázala, pero las pantallas y requisitos de la sección 7 son los mismos. |
+| 2 | **Frontend:** en **React**, **Vue** o **JavaScript vanilla**, a tu elección. En `frontend/` hay tres plantillas equivalentes (`react/`, `vue/`, `vanilla/`) con login, rutas, cliente HTTP y componentes ya hechos; elige **una**, úsala o reemplázala, pero las pantallas y requisitos de la sección 7 son los mismos. Otro framework (Angular, Svelte…) también es válido si cumples esos requisitos. |
 | 3 | **Tres contenedores separados** orquestados por el `docker-compose.yml` de este repositorio: `db` (entregado, no se modifica), `backend` (tuyo) y `frontend` (tuyo). |
 | 4 | **No modifiques** `db/init/01-schema.sql` ni `db/init/02-seed.sql`. Si necesitas objetos adicionales (vistas, índices, procedimientos), agrégalos en un archivo nuevo `db/init/03-<nombre>.sql` y explícalo en el README. |
 | 5 | **No guardes contraseñas en texto plano** ni cambies los hashes de la base. El login debe validar contra el hash bcrypt existente. |
@@ -84,7 +84,7 @@ que no arranca, no.
 ```
 ┌─────────────────────────────┐
 │          FRONTEND           │  contenedor `frontend`
-│   React (Vite / Next / CRA) │  puerto host: el que elijas (sugerido 3000)
+│  React · Vue · JS vanilla   │  puerto host: el que elijas (sugerido 3000)
 └──────────────┬──────────────┘
                │ HTTP / JSON  (fetch / axios)
                ▼
@@ -227,7 +227,7 @@ Estos pasos descargan imágenes y dependencias y **no forman parte de la prueba*
 iniciar el cronómetro:
 
 1. Clonar el repositorio y ejecutar `docker compose up -d` (descarga SQL Server, ≈ 1.5 GB).
-2. `cd frontend && npm install`.
+2. Elegir una plantilla de frontend (`frontend/react`, `frontend/vue` o `frontend/vanilla`) y, si es React o Vue, ejecutar `npm install` dentro de esa carpeta.
 3. Tener instalado el runtime de tu backend (Node, .NET SDK, Python, PHP + Composer, etc.).
 4. Leer este documento, `tests/README.md` y el ejemplo de tu stack en `docs/ejemplos/`.
 
@@ -269,9 +269,9 @@ Problemas comunes: ver la sección [Solución de problemas del README](./README.
 
 ## 6. Paso 2 – API REST
 
-Las rutas, métodos, cuerpos y respuestas de esta sección son **exactos y obligatorios**. La plantilla de
-frontend entregada (`frontend/src/api/client.js`) ya los consume tal cual, así que respetarlos te ahorra
-tiempo. No agregues versionado (`/v1`), no cambies nombres de propiedades y no envuelvas las respuestas
+Las rutas, métodos, cuerpos y respuestas de esta sección son **exactos y obligatorios**. Las plantillas de
+frontend entregadas (`frontend/react/src/api/client.js`, `frontend/vue/src/api/client.js`,
+`frontend/vanilla/js/api.js`) ya los consumen tal cual, así que respetarlos te ahorra tiempo. No agregues versionado (`/v1`), no cambies nombres de propiedades y no envuelvas las respuestas
 en objetos tipo `{ data: ... }`.
 
 Resumen:
@@ -440,26 +440,35 @@ Detalle en [`tests/README.md`](./tests/README.md).
 
 ---
 
-## 7. Paso 3 – Frontend en React
+## 7. Paso 3 – Frontend (React, Vue o JS vanilla)
 
 Tres pantallas. No se evalúa diseño visual: se evalúa que funcione, que esté bien estructurado y que
-maneje los estados de carga y error.
+maneje los estados de carga y error. Rutas: `/login`, `/` y `/contracts/:id` (la plantilla vanilla las
+sirve con hash: `#/login`, `#/`, `#/contracts/:id`; es válido).
 
-**Para no empezar desde cero, en `frontend/` hay una plantilla React (Vite) lista para usar.**
-Incluye rutas, login funcional, cliente HTTP con token, contexto de sesión, dashboard, detalle de
-contrato, tablas, badges, estados de carga/error, `Dockerfile` y `nginx.conf`. Detalle en
-[`frontend/README.md`](./frontend/README.md).
+**Para no empezar desde cero, en `frontend/` hay tres plantillas equivalentes. Elige una:**
 
-Lo que **tú** debes completar está marcado con `TODO (candidato)`:
+| Carpeta             | Stack                                     | Build          | URL de la API                                  |
+|---------------------|-------------------------------------------|----------------|------------------------------------------------|
+| `frontend/react/`   | React 19 + Vite + React Router            | `npm run build`| `VITE_API_URL` (build arg)                     |
+| `frontend/vue/`     | Vue 3 + Vite + Vue Router                 | `npm run build`| `VITE_API_URL` (build arg)                     |
+| `frontend/vanilla/` | JavaScript puro, módulos ES, sin dependencias | ninguno    | `API_URL` (variable de entorno del contenedor) |
 
-| Archivo                                      | Qué falta                                                                                   |
-|----------------------------------------------|---------------------------------------------------------------------------------------------|
-| `frontend/src/pages/DashboardPage.jsx`       | Contadores de tickets pendientes y en proceso para el usuario autenticado.                  |
-| `frontend/src/pages/ContractDetailPage.jsx`  | `getAvailableActions` (qué botones ver según rol y estatus) y `handleChangeStatus` (llamar a `PATCH /api/tickets/{id}`, refrescar, mostrar errores `403`/`409`). |
+Las tres incluyen lo mismo: rutas, login funcional, cliente HTTP con token, sesión, dashboard, detalle
+de contrato, tablas, badges, estados de carga/error, `Dockerfile` y `nginx.conf`. Detalle en
+[`frontend/README.md`](./frontend/README.md) y en el README de cada plantilla.
+
+Lo que **tú** debes completar está marcado con `TODO (candidato)` y es lo mismo en las tres:
+
+| Qué falta                                                                                   | React                                | Vue                                  | Vanilla                          |
+|---------------------------------------------------------------------------------------------|--------------------------------------|--------------------------------------|----------------------------------|
+| Contadores de tickets pendientes y en proceso para el usuario autenticado.                  | `src/pages/DashboardPage.jsx`        | `src/pages/DashboardPage.vue`        | `js/pages/dashboard.js`          |
+| `getAvailableActions` (qué botones ver según rol y estatus) y `handleChangeStatus` (llamar a `PATCH /api/tickets/{id}`, refrescar, mostrar errores `403`/`409`). | `src/pages/ContractDetailPage.jsx` | `src/pages/ContractDetailPage.vue` | `js/pages/contractDetail.js` |
 
 Puedes modificar cualquier archivo de la plantilla, cambiar estilos, usar TypeScript o una librería de
-componentes. Si prefieres no usarla y hacer tu propio frontend, también es válido, pero debes cumplir
-las mismas pantallas y requisitos.
+componentes. Si prefieres no usar ninguna y hacer tu propio frontend (con estas u otras tecnologías),
+también es válido, pero debes cumplir las mismas pantallas y requisitos. Las plantillas que no uses
+puedes borrarlas de tu entrega.
 
 ### 7.1 Login (`/login`)
 
@@ -547,7 +556,7 @@ TICKETS
   centralice el manejo de errores. Si la API devuelve `401`, cerrar sesión y volver al login.
 - Estados de carga ("Cargando…") y de error visibles en cada pantalla.
 - La URL base de la API debe venir de una variable de entorno (por ejemplo `VITE_API_URL`), no estar
-  escrita en el código.
+  escrita en el código. En la plantilla vanilla (sin build) se lee de `config.js`, que el contenedor genera a partir de `API_URL`.
 
 ---
 
@@ -567,11 +576,12 @@ Estructura esperada del repositorio al final:
 │   ├── Dockerfile
 │   ├── .env.example
 │   └── ... tu código
-├── frontend/                   # plantilla entregada (Dockerfile, nginx.conf y .env.example incluidos)
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── .env.example
-│   └── src/ ... completa los TODO
+├── frontend/
+│   └── react/ | vue/ | vanilla/  # la plantilla que elegiste (Dockerfile, nginx.conf y .env.example incluidos)
+│       ├── Dockerfile
+│       ├── nginx.conf
+│       ├── .env.example
+│       └── src/ (o js/) ... completa los TODO
 ├── README.md                   # el tuyo (ver sección 12)
 └── PRUEBA_TECNICA.md
 ```
@@ -596,9 +606,10 @@ Ejemplo de cómo podrían quedar los servicios (adáptalo a tu stack):
       db:
         condition: service_healthy
 
+  # Plantilla React o Vue: la URL se incrusta en el build
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend/react          # o ./frontend/vue
       args:
         # Vite incrusta esta URL en el build; es la que usará el navegador
         VITE_API_URL: http://localhost:8080/api
@@ -607,9 +618,20 @@ Ejemplo de cómo podrían quedar los servicios (adáptalo a tu stack):
       - "3000:80"
     depends_on:
       - backend
+
+  # Plantilla vanilla: la URL se lee al arrancar el contenedor (no hay build)
+  # frontend:
+  #   build: ./frontend/vanilla
+  #   container_name: mantenimiento-frontend
+  #   environment:
+  #     API_URL: http://localhost:8080/api
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     - backend
 ```
 
-El `Dockerfile` y el `nginx.conf` del frontend ya están en la plantilla; el servicio de arriba
+El `Dockerfile` y el `nginx.conf` del frontend ya están en cada plantilla; el servicio de arriba
 funciona tal cual si tu backend escucha en el puerto `8080`.
 
 Consideraciones:
@@ -684,7 +706,7 @@ Para 1:30 horas, esto es lo **obligatorio** (con esto se obtiene la calificació
 - [ ] `POST /api/auth/login` con bcrypt y token; rechaza inactivos.
 - [ ] `GET /api/contracts`, `GET /api/contracts/{id}`, `GET /api/contracts/{id}/tickets` con filtrado por rol.
 - [ ] `PATCH /api/tickets/{id}` con reglas de negocio y permisos.
-- [ ] Frontend React con Login, Dashboard y Detalle de contrato consumiendo la API (completar los `TODO (candidato)` de la plantilla).
+- [ ] Frontend (React, Vue o JS vanilla) con Login, Dashboard y Detalle de contrato consumiendo la API (completar los `TODO (candidato)` de la plantilla elegida).
 - [ ] Manejo de errores con los códigos de la sección 10.
 - [ ] Variables de entorno + `.env.example`.
 - [ ] README según la sección 12, incluida la pregunta final.
@@ -716,7 +738,7 @@ CI/CD, Terraform, registro de usuarios, recuperación de contraseña, diseño vi
 
 ## Tecnologías utilizadas
 - Backend: <lenguaje + framework + versión>. Por qué lo elegí: ...
-- Frontend: React <versión> + <Vite/Next/...>
+- Frontend: <React / Vue / JS vanilla> <versión> + <Vite/...>. Plantilla usada: frontend/<react|vue|vanilla>
 - Base de datos: SQL Server 2022 (entregada)
 
 ## Requisitos
@@ -789,7 +811,7 @@ Interpretación: 90–100 excelente · 80–89 muy bueno · 70–79 cumple · 60
 
 | Tiempo      | Actividad                                                                                   |
 |-------------|---------------------------------------------------------------------------------------------|
-| 0:00 – 0:08 | Levantar la base, conectarte, revisar tablas y datos. Elegir stack. `npm install` en `frontend/`. |
+| 0:00 – 0:08 | Levantar la base, conectarte, revisar tablas y datos. Elegir stack y plantilla de frontend (`npm install` si es React o Vue). |
 | 0:08 – 0:55 | Backend: conexión a SQL Server, login con bcrypt + token, middleware de auth/roles, 3 GET, 1 PATCH |
 | 0:55 – 1:10 | Frontend: completar los `TODO (candidato)` (contadores, acciones por rol, PATCH) y probar con los 3 roles |
 | 1:10 – 1:22 | Dockerfile del backend, servicios en compose, probar `docker compose up -d --build` desde cero |

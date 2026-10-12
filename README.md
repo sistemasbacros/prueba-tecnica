@@ -6,8 +6,9 @@ Este repositorio contiene:
 
 - **La base de datos lista para usar:** SQL Server 2022 en Docker, con esquema y datos iniciales que se
   cargan automáticamente.
-- **Una plantilla de frontend en React** (`frontend/`) con login, rutas, cliente HTTP y componentes,
-  para que no empieces desde cero.
+- **Tres plantillas de frontend equivalentes** (`frontend/react/`, `frontend/vue/` y
+  `frontend/vanilla/`) con login, rutas, cliente HTTP y componentes, para que no empieces desde cero.
+  Elige la del stack que domines (ver [`frontend/README.md`](./frontend/README.md)).
 - **El enunciado completo** en [`PRUEBA_TECNICA.md`](./PRUEBA_TECNICA.md). Léelo antes de empezar.
 - **Una guía visual** en [`docs/guia-candidato.html`](./docs/guia-candidato.html) con el mapa conceptual de la
   arquitectura y qué archivos se modifican. Ábrela en el navegador.
@@ -20,7 +21,7 @@ en **tres contenedores** (`db`, `backend`, `frontend`) con `docker compose`.
 ## Requisitos
 
 - Docker Desktop (o Docker Engine) con Docker Compose v2.
-- Node.js 20+ si quieres ejecutar el frontend fuera de Docker durante el desarrollo.
+- Node.js 20+ si eliges la plantilla React o Vue y quieres ejecutarla fuera de Docker (la plantilla vanilla no lo necesita).
 - El runtime de tu backend (Node, .NET, PHP, Python, etc.) si lo desarrollas fuera de Docker.
 
 ## Antes de que empiece el tiempo
@@ -30,8 +31,8 @@ Descarga imágenes y dependencias antes de iniciar el cronómetro; no forman par
 ```bash
 git clone https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
-docker compose up -d                 # descarga SQL Server (~1.5 GB) y carga los datos
-cd frontend && npm install && cd ..  # dependencias de la plantilla React
+docker compose up -d                       # descarga SQL Server (~1.5 GB) y carga los datos
+cd frontend/react && npm install && cd ../..   # o frontend/vue. La plantilla vanilla no necesita nada.
 ```
 
 Ten listo el runtime de tu backend y revisa el ejemplo de tu stack en `docs/ejemplos/`.
@@ -80,7 +81,10 @@ Resultado esperado: 6 usuarios, 4 contratos, 17 tickets.
 │       ├── 01-schema.sql     # Base MantenimientoDB, login mantenimiento_app, tablas, índices
 │       └── 02-seed.sql       # Datos iniciales (usuarios, contratos, tickets)
 ├── backend/                  # <- tu API REST (ver backend/README.md)
-├── frontend/                 # <- plantilla React (ver frontend/README.md)
+├── frontend/                 # <- elige UNA plantilla (ver frontend/README.md)
+│   ├── react/                #    React 19 + Vite + React Router
+│   ├── vue/                  #    Vue 3 + Vite + Vue Router
+│   └── vanilla/              #    JavaScript puro, sin dependencias ni build
 ├── tests/
 │   ├── smoke.sh              # Verificación automática de la API (la usa el evaluador)
 │   └── api.http              # Las mismas peticiones para REST Client / Postman
@@ -156,5 +160,5 @@ Para reiniciar desde cero usa `docker compose down -v`.
 | `all predefined address pools have been fully subnetted` | Demasiadas redes de Docker en tu máquina. Ejecuta `docker network prune` (solo elimina redes sin usar) o define una subred en el compose. |
 | Mac con Apple Silicon (M1/M2/M3) | La imagen `mssql/server:2022` es amd64. Activa Rosetta en Docker Desktop (Settings → General → "Use Rosetta") o agrega `platform: linux/amd64` al servicio `db`. |
 | Tu backend no conecta desde su contenedor | Usa el host `db`, no `localhost`. Agrega `TrustServerCertificate=True`. Espera al healthcheck con `depends_on: condition: service_healthy`. |
-| El frontend en Docker llama a la API y falla | El navegador no resuelve `backend`; la URL de la API debe ser `http://localhost:<puerto>` (o usa el proxy de nginx incluido en `frontend/nginx.conf`). Revisa CORS en tu backend. |
+| El frontend en Docker llama a la API y falla | El navegador no resuelve `backend`; la URL de la API debe ser `http://localhost:<puerto>` (o usa el proxy de nginx incluido en el `nginx.conf` de la plantilla). Revisa CORS en tu backend. |
 | El login dice que la contraseña es incorrecta con los datos correctos | Verifica que tu librería bcrypt acepta el prefijo `$2a$` y que comparas contra `PasswordHash` sin recortar ni re-hashear. |
