@@ -1,11 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { api } from '../api/client.js';
-import { useAuth } from '../context/AuthContext.jsx';
-import StatusBadge from '../components/StatusBadge.jsx';
-import TicketTable from '../components/TicketTable.jsx';
-import { ErrorMessage, Loading } from '../components/Feedback.jsx';
-import { formatDate, TICKET_STATUS } from '../utils/format.js';
+import { api } from '../api.js';
+import { auth } from '../session.js';
+import { statusBadge, ticketTable, loading, errorMessage, esc } from '../components.js';
+import { formatDate, TICKET_STATUS } from '../format.js';
 
 /* =====================================================================
  * PARA EL CANDIDATO
@@ -30,7 +26,7 @@ import { formatDate, TICKET_STATUS } from '../utils/format.js';
  *        CANCELADO          → ninguna
  *
  *        Además:
- *        - Si `contract.estatus` no es 'ACTIVO' → ninguna acción para nadie.
+ *        - Si `state.contract.estatus` no es 'ACTIVO' → ninguna acción para nadie.
  *        - Si currentUser.role es 'TECNICO' → solo hay acciones cuando
  *          ticket.usuarioAsignado?.id === currentUser.id.
  *        - ADMINISTRADOR y SUPERVISOR pueden actuar sobre cualquier ticket.
@@ -39,10 +35,10 @@ import { formatDate, TICKET_STATUS } from '../utils/format.js';
  *   2. La función `handleChangeStatus(ticket, estatus)`.
  *      Debe:
  *        a) llamar a `await api.updateTicketStatus(ticket.id, estatus)`;
- *        b) refrescar la tabla (llamar a `load()` o reemplazar el ticket en el
- *           estado con la respuesta del backend);
+ *        b) refrescar la tabla (llamar a `load()` o reemplazar el ticket en
+ *           `state.tickets` con la respuesta del backend);
  *        c) si el backend responde 403 o 409, mostrar el mensaje con
- *           <ErrorMessage error={actionError} /> (ya está en el JSX).
+ *           errorMessage(state.actionError) (ya está en `view()`).
  *
  *   3. Comprobar que la seguridad NO depende de los botones: aunque se oculten,
  *      el backend debe rechazar con 403 el PATCH de un técnico sobre un ticket
@@ -55,35 +51,77 @@ import { formatDate, TICKET_STATUS } from '../utils/format.js';
 
 /**
  * Detalle del contrato + tabla de tickets.
+ *
+ * @param {HTMLElement} el       Contenedor donde se pinta la pantalla.
+ * @param {{ id: string }} params  Parámetros de la ruta #/contracts/:id
  */
-export default function ContractDetailPage() {
-  const { id } = useParams();
-  const { user } = useAuth();
+export function renderContractDetail(el, { id }) {
+  const state = {
+    contract: null,
+    tickets: [],
+    loading: true,
+    error: null,
+    actionError: null,
+    busyTicketId: null,
+  };
 
-  const [contract, setContract] = useState(null);
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [actionError, setActionError] = useState(null);
-  const [busyTicketId, setBusyTicketId] = useState(null);
+  function view() {
+    if (state.loading) {
+      el.innerHTML = loading();
+      return;
+    }
+    if (state.error) {
+      el.innerHTML = errorMessage(state.error, { retry: true });
+      el.querySelector('[data-retry]')?.addEventListener('click', load);
+      return;
+    }
+    if (!state.contract) {
+      el.innerHTML = '';
+      return;
+    }
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    const c = state.contract;
+    el.innerHTML = `
+      <p><a href="#/">← Volver al dashboard</a></p>
+
+      <section class="card">
+        <h1>Contrato: ${esc(c.numero)}</h1>
+        <dl class="details">
+          <dt>Nombre</dt>
+          <dd>${esc(c.nombre)}</dd>
+          <dt>Inicio</dt>
+          <dd>${esc(formatDate(c.fechaInicio))}</dd>
+          <dt>Fin</dt>
+          <dd>${esc(formatDate(c.fechaFin))}</dd>
+          <dt>Estatus</dt>
+          <dd>${statusBadge(c.estatus)}</dd>
+          <dt>Responsable</dt>
+          <dd>${esc(c.responsable?.nombre ?? '—')}</dd>
+        </dl>
+      </section>
+
+      <section>
+        <h2>Tickets</h2>
+        ${errorMessage(state.actionError)}
+        ${ticketTable(state.tickets, { renderActions })}
+      </section>`;
+  }
+
+  async function load() {
+    state.loading = true;
+    state.error = null;
+    view();
     try {
       const [c, t] = await Promise.all([api.getContract(id), api.getContractTickets(id)]);
-      setContract(c);
-      setTickets(t);
+      state.contract = c;
+      state.tickets = t;
     } catch (err) {
-      setError(err);
+      state.error = err;
     } finally {
-      setLoading(false);
+      state.loading = false;
+      if (el.isConnected) view(); // no pintar si el usuario ya cambió de pantalla
     }
-  }, [id]);
-
-  useEffect(() => {
-    load();
-  }, [load]);
+  }
 
   /**
    * Devuelve las acciones disponibles para un ticket según rol y estatus.
@@ -101,13 +139,13 @@ export default function ContractDetailPage() {
    * @param {object} currentUser  Usuario autenticado ({ id, username, role })
    * @returns {Array<{ label: string, estatus: string, tone?: string }>}
    */
-  const getAvailableActions = (ticket, currentUser) => {
+  function getAvailableActions(ticket, currentUser) {
     void ticket;
     void currentUser;
     void TICKET_STATUS;
-    void contract;
+    void state.contract;
     return []; // <- reemplazar por la lista de acciones según las reglas
-  };
+  }
 
   /**
    * Cambia el estatus de un ticket.
@@ -119,64 +157,43 @@ export default function ContractDetailPage() {
    * @param {object} ticket   Ticket sobre el que se actúa
    * @param {string} estatus  Nuevo estatus (uno de TICKET_STATUS)
    */
-  const handleChangeStatus = async (ticket, estatus) => {
-    setActionError(null);
-    setBusyTicketId(ticket.id);
+  async function handleChangeStatus(ticket, estatus) {
+    state.actionError = null;
+    state.busyTicketId = ticket.id;
+    view();
     try {
       void estatus; // <- reemplazar por: await api.updateTicketStatus(ticket.id, estatus); await load();
     } catch (err) {
-      setActionError(err);
+      state.actionError = err;
     } finally {
-      setBusyTicketId(null);
+      state.busyTicketId = null;
+      if (el.isConnected) view();
     }
-  };
+  }
 
-  const renderActions = (ticket) =>
-    getAvailableActions(ticket, user).map((action) => (
-      <button
-        key={action.estatus}
-        type="button"
-        className={`btn btn-small ${action.tone === 'danger' ? 'btn-danger' : 'btn-secondary'}`}
-        disabled={busyTicketId === ticket.id}
-        onClick={() => handleChangeStatus(ticket, action.estatus)}
-      >
-        {action.label}
-      </button>
-    ));
+  /** HTML de los botones de la columna "Acciones" para un ticket (los pinta ticketTable). */
+  function renderActions(ticket) {
+    return getAvailableActions(ticket, auth.user)
+      .map(
+        (action) => `
+          <button
+            type="button"
+            class="btn btn-small ${action.tone === 'danger' ? 'btn-danger' : 'btn-secondary'}"
+            data-ticket-id="${esc(ticket.id)}"
+            data-estatus="${esc(action.estatus)}"
+            ${state.busyTicketId === ticket.id ? 'disabled' : ''}
+          >${esc(action.label)}</button>`,
+      )
+      .join('');
+  }
 
-  if (loading) return <Loading />;
-  if (error) return <ErrorMessage error={error} onRetry={load} />;
-  if (!contract) return null;
+  // Clic en cualquier botón de acción (delegado: la tabla se vuelve a pintar en cada cambio).
+  el.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-ticket-id]');
+    if (!button) return;
+    const ticket = state.tickets.find((t) => String(t.id) === button.dataset.ticketId);
+    if (ticket) handleChangeStatus(ticket, button.dataset.estatus);
+  });
 
-  return (
-    <>
-      <p>
-        <Link to="/">← Volver al dashboard</Link>
-      </p>
-
-      <section className="card">
-        <h1>Contrato: {contract.numero}</h1>
-        <dl className="details">
-          <dt>Nombre</dt>
-          <dd>{contract.nombre}</dd>
-          <dt>Inicio</dt>
-          <dd>{formatDate(contract.fechaInicio)}</dd>
-          <dt>Fin</dt>
-          <dd>{formatDate(contract.fechaFin)}</dd>
-          <dt>Estatus</dt>
-          <dd>
-            <StatusBadge status={contract.estatus} />
-          </dd>
-          <dt>Responsable</dt>
-          <dd>{contract.responsable?.nombre ?? '—'}</dd>
-        </dl>
-      </section>
-
-      <section>
-        <h2>Tickets</h2>
-        <ErrorMessage error={actionError} />
-        <TicketTable tickets={tickets} renderActions={renderActions} />
-      </section>
-    </>
-  );
+  load();
 }

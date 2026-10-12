@@ -8,8 +8,8 @@
  * funciones de `api` ya los consumen tal cual.
  *
  * Solo debe modificar este archivo si:
- *   - Su API no corre en http://localhost:8080/api → cambiar VITE_API_URL
- *     en frontend/.env (desarrollo) y en docker-compose.yml (build arg).
+ *   - Su API no corre en http://localhost:8080/api → cambiar `apiUrl` en
+ *     config.js (desarrollo) y la variable API_URL en docker-compose.yml.
  *   - Usa autenticación por cookie en lugar de token → agregar
  *     `credentials: 'include'` al fetch y quitar el header Authorization.
  *   - Implementa los endpoints deseables con otra ruta → ajustar `api.*`.
@@ -21,14 +21,15 @@
  * - Agrega el header Authorization: Bearer <token> a todas las peticiones.
  * - Convierte las respuestas de error de la API en instancias de ApiError.
  * - Si la API responde 401 emite el evento `auth:unauthorized` para que
- *   AuthContext cierre la sesión y redirija al login.
+ *   session.js cierre la sesión y redirija al login.
  *
- * La URL base viene de la variable de entorno VITE_API_URL (ver .env.example).
+ * La URL base viene de window.APP_CONFIG.apiUrl (config.js). No hay paso de
+ * build: en Docker, config.js se regenera al arrancar a partir de API_URL.
  *
  * =====================================================================
  * ENDPOINTS QUE DEBE EXPONER TU BACKEND (detalle en PRUEBA_TECNICA.md §6)
  * =====================================================================
- * Todas las rutas van bajo VITE_API_URL (por defecto http://localhost:8080/api).
+ * Todas las rutas van bajo apiUrl (por defecto http://localhost:8080/api).
  * Salvo el login, todas requieren `Authorization: Bearer <token>`.
  * Errores siempre con el formato { "error": "CODIGO", "message": "texto" }.
  *
@@ -95,7 +96,7 @@
  *   403 sin permiso · 404 no existe · 409 conflicto de estado · 500 error no controlado
  */
 
-const API_URL = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api').replace(/\/$/, '');
+const API_URL = (window.APP_CONFIG?.apiUrl ?? 'http://localhost:8080/api').replace(/\/$/, '');
 const TOKEN_KEY = 'mantenimiento.token';
 const USER_KEY = 'mantenimiento.user';
 

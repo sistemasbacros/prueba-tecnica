@@ -1,8 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { api } from '../api/client.js';
-import StatCard from '../components/StatCard.jsx';
-import ContractList from '../components/ContractList.jsx';
-import { ErrorMessage, Loading } from '../components/Feedback.jsx';
+import { api } from '../api.js';
+import { statCard, contractList, loading, errorMessage } from '../components.js';
 
 /* =====================================================================
  * PARA EL CANDIDATO
@@ -32,7 +29,7 @@ import { ErrorMessage, Loading } from '../components/Feedback.jsx';
  *      el backend filtre correctamente por rol.
  *
  *   3. Mantener el manejo de errores: si falla la carga de tickets, mostrar el
- *      error con <ErrorMessage /> en lugar de dejar los contadores en "—".
+ *      error con errorMessage() en lugar de dejar los contadores en "—".
  *
  * Resultado esperado con los datos iniciales:
  *      administrador y supervisor → activos 3, pendientes 6, en proceso 3
@@ -41,53 +38,62 @@ import { ErrorMessage, Loading } from '../components/Feedback.jsx';
 
 /**
  * Dashboard: contadores + lista de contratos del usuario autenticado.
+ *
+ * Patrón de todas las páginas: un objeto `state`, una función `view()` que
+ * pinta el estado completo en `el` y engancha eventos, y una función `load()`
+ * que llama a la API y vuelve a pintar.
+ *
+ * @param {HTMLElement} el  Contenedor donde se pinta la pantalla.
  */
-export default function DashboardPage() {
-  const [contracts, setContracts] = useState([]);
-  const [stats, setStats] = useState({ contratosActivos: null, ticketsPendientes: null, ticketsEnProceso: null });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export function renderDashboard(el) {
+  const state = {
+    contracts: [],
+    stats: { contratosActivos: null, ticketsPendientes: null, ticketsEnProceso: null },
+    loading: true,
+    error: null,
+  };
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.getContracts();
-      setContracts(data);
-      // TODO (candidato): el candidato debe implementar aquí el cálculo de
-      // ticketsPendientes y ticketsEnProceso (ver opciones A y B en la cabecera).
-      setStats({
-        contratosActivos: data.filter((c) => c.estatus === 'ACTIVO').length,
-        ticketsPendientes: null, // <- reemplazar null por el conteo real
-        ticketsEnProceso: null, // <- reemplazar null por el conteo real
-      });
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  return (
-    <>
+  function view() {
+    el.innerHTML = `
       <h1>Dashboard</h1>
 
-      <section className="stats">
-        <StatCard label="Contratos activos" value={stats.contratosActivos} tone="info" />
-        <StatCard label="Tickets pendientes" value={stats.ticketsPendientes} tone="warning" />
-        <StatCard label="Tickets en proceso" value={stats.ticketsEnProceso} tone="success" />
+      <section class="stats">
+        ${statCard({ label: 'Contratos activos', value: state.stats.contratosActivos, tone: 'info' })}
+        ${statCard({ label: 'Tickets pendientes', value: state.stats.ticketsPendientes, tone: 'warning' })}
+        ${statCard({ label: 'Tickets en proceso', value: state.stats.ticketsEnProceso, tone: 'success' })}
       </section>
 
       <section>
         <h2>Contratos</h2>
-        {loading && <Loading />}
-        <ErrorMessage error={error} onRetry={load} />
-        {!loading && !error && <ContractList contracts={contracts} />}
-      </section>
-    </>
-  );
+        ${state.loading ? loading() : ''}
+        ${errorMessage(state.error, { retry: true })}
+        ${!state.loading && !state.error ? contractList(state.contracts) : ''}
+      </section>`;
+
+    el.querySelector('[data-retry]')?.addEventListener('click', load);
+  }
+
+  async function load() {
+    state.loading = true;
+    state.error = null;
+    view();
+    try {
+      const data = await api.getContracts();
+      state.contracts = data;
+      // TODO (candidato): el candidato debe implementar aquí el cálculo de
+      // ticketsPendientes y ticketsEnProceso (ver opciones A y B en la cabecera).
+      state.stats = {
+        contratosActivos: data.filter((c) => c.estatus === 'ACTIVO').length,
+        ticketsPendientes: null, // <- reemplazar null por el conteo real
+        ticketsEnProceso: null, // <- reemplazar null por el conteo real
+      };
+    } catch (err) {
+      state.error = err;
+    } finally {
+      state.loading = false;
+      if (el.isConnected) view(); // no pintar si el usuario ya cambió de pantalla
+    }
+  }
+
+  load();
 }

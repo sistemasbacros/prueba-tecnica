@@ -152,11 +152,11 @@
   <header>
     <div class="eyebrow">Prueba técnica · Full Stack Senior · 1:30 horas</div>
     <h1>Sistema de Mantenimiento: contratos y tickets</h1>
-    <p class="lead">Nosotros entregamos la base de datos en Docker y una plantilla de frontend en React. Tú construyes la API REST y completas el frontend. Esta página resume qué recibes, qué debes implementar y en qué archivos. El enunciado completo y obligatorio es <code>PRUEBA_TECNICA.md</code>.</p>
+    <p class="lead">Nosotros entregamos la base de datos en Docker y una plantilla de frontend en JavaScript vanilla (sin framework ni build). Tú construyes la API REST y completas el frontend. Esta página resume qué recibes, qué debes implementar y en qué archivos. El enunciado completo y obligatorio es <code>PRUEBA_TECNICA.md</code>.</p>
     <div class="meta">
       <span>Repositorio: <strong>github.com/sistemasbacros/prueba-tecnica</strong></span>
       <span>Base: <strong>SQL Server 2022</strong></span>
-      <span>Frontend: <strong>React (plantilla incluida)</strong></span>
+      <span>Frontend: <strong>JavaScript vanilla (plantilla incluida)</strong></span>
       <span>Backend: <strong>lenguaje libre</strong></span>
     </div>
   </header>
@@ -171,7 +171,7 @@
   </div>
 
   <div class="map">
-    <svg viewBox="0 0 980 540" role="img" aria-label="Mapa de la arquitectura: navegador, frontend React, API REST y SQL Server dentro de docker compose, con los archivos que corresponden a cada parte">
+    <svg viewBox="0 0 980 540" role="img" aria-label="Mapa de la arquitectura: navegador, frontend JavaScript vanilla, API REST y SQL Server dentro de docker compose, con los archivos que corresponden a cada parte">
       <defs>
         <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="currentColor" style="color: var(--fg)"></path>
@@ -195,10 +195,10 @@
       <!-- Frontend -->
       <rect class="box box-todo" x="210" y="80" width="220" height="190"></rect>
       <text x="320" y="108" text-anchor="middle" class="t-title">FRONTEND</text>
-      <text x="320" y="126" text-anchor="middle" class="t-small">React + Vite + nginx</text>
+      <text x="320" y="126" text-anchor="middle" class="t-small">JavaScript vanilla + nginx</text>
       <text x="320" y="150" text-anchor="middle" class="t-tag t-todo">PLANTILLA · COMPLETAR 2 TODO</text>
-      <text x="226" y="178" class="file">pages/DashboardPage.jsx</text>
-      <text x="226" y="194" class="file">pages/ContractDetailPage.jsx</text>
+      <text x="226" y="178" class="file">js/pages/dashboard.js</text>
+      <text x="226" y="194" class="file">js/pages/contractDetail.js</text>
       <text x="226" y="218" class="t-small">Login, rutas, cliente HTTP,</text>
       <text x="226" y="234" class="t-small">tablas y Dockerfile ya listos</text>
       <text x="320" y="258" text-anchor="middle" class="t-mono">contenedor frontend · :3000</text>
@@ -250,7 +250,7 @@
       <text x="190" y="420" class="t-small">enunciado completo y rúbrica</text>
       <text x="36" y="440" class="file">README.md</text>
       <text x="190" y="440" class="t-small">arranque, credenciales, errores</text>
-      <text x="36" y="460" class="file">frontend/src/api/client.js</text>
+      <text x="36" y="460" class="file">frontend/js/api.js</text>
       <text x="190" y="460" class="t-small">endpoints exactos a exponer</text>
       <text x="36" y="480" class="file">tests/smoke.sh</text>
       <text x="190" y="480" class="t-small">verificación automática de tu API</text>
@@ -304,15 +304,15 @@
       <tr><td class="dir">backend/</td><td><span class="chip chip-build">Tú lo creas</span></td><td class="what">Tu API completa. Solo hay un README con el resumen de endpoints.</td></tr>
       <tr><td class="d1">Dockerfile</td><td><span class="chip chip-build">Crear</span></td><td class="what">Imagen de tu API. Multi-stage y sin secretos horneados.</td></tr>
       <tr><td class="d1">.env.example</td><td><span class="chip chip-build">Crear</span></td><td class="what">DB_HOST=db, DB_USER=mantenimiento_app, JWT_SECRET, PORT…</td></tr>
-      <tr><td class="dir">frontend/</td><td><span class="chip chip-todo">Plantilla</span></td><td class="what">React + Vite. Ya compila y ya tiene Dockerfile.</td></tr>
-      <tr><td class="d1">Dockerfile · nginx.conf · .env.example</td><td><span class="chip chip-done">Completo</span></td><td class="what">Build multi-stage y nginx con fallback SPA. Proxy a <code>/api</code> opcional.</td></tr>
-      <tr><td class="d1">src/api/client.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Cliente HTTP con token. Su cabecera lista los endpoints que tu backend debe exponer.</td></tr>
-      <tr><td class="d1">src/context/AuthContext.jsx</td><td><span class="chip chip-done">Completo</span></td><td class="what">Sesión, login, logout y cierre automático ante 401.</td></tr>
-      <tr><td class="d1">src/pages/LoginPage.jsx</td><td><span class="chip chip-done">Completo</span></td><td class="what">Funciona en cuanto tu login responda con <code>{ token, user }</code>.</td></tr>
-      <tr><td class="d1">src/pages/DashboardPage.jsx</td><td><span class="chip chip-todo">Completar</span></td><td class="what">En <code>load()</code>: contadores de tickets pendientes y en proceso para el usuario.</td></tr>
-      <tr><td class="d1">src/pages/ContractDetailPage.jsx</td><td><span class="chip chip-todo">Completar</span></td><td class="what"><code>getAvailableActions</code> (botones por rol y estatus) y <code>handleChangeStatus</code> (PATCH, refrescar, mostrar 403/409).</td></tr>
-      <tr><td class="d1">src/components/*</td><td><span class="chip chip-done">Completo</span></td><td class="what">Layout, ProtectedRoute, ContractList, TicketTable, StatCard, StatusBadge, Feedback.</td></tr>
-      <tr><td class="d1">src/utils/format.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Constantes ROLES y TICKET_STATUS, etiquetas y formato de fechas. Úsalas en tus reglas.</td></tr>
+      <tr><td class="dir">frontend/</td><td><span class="chip chip-todo">Plantilla</span></td><td class="what">JavaScript vanilla, sin dependencias ni build. Ya tiene Dockerfile.</td></tr>
+      <tr><td class="d1">Dockerfile · nginx.conf · .env.example</td><td><span class="chip chip-done">Completo</span></td><td class="what">nginx sin build; <code>config.js</code> se genera al arrancar con <code>API_URL</code>. Proxy a <code>/api</code> opcional.</td></tr>
+      <tr><td class="d1">js/api.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Cliente HTTP con token. Su cabecera lista los endpoints que tu backend debe exponer.</td></tr>
+      <tr><td class="d1">js/session.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Sesión, login, logout y cierre automático ante 401.</td></tr>
+      <tr><td class="d1">js/pages/login.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Funciona en cuanto tu login responda con <code>{ token, user }</code>.</td></tr>
+      <tr><td class="d1">js/pages/dashboard.js</td><td><span class="chip chip-todo">Completar</span></td><td class="what">En <code>load()</code>: contadores de tickets pendientes y en proceso para el usuario.</td></tr>
+      <tr><td class="d1">js/pages/contractDetail.js</td><td><span class="chip chip-todo">Completar</span></td><td class="what"><code>getAvailableActions</code> (botones por rol y estatus) y <code>handleChangeStatus</code> (PATCH, refrescar, mostrar 403/409).</td></tr>
+      <tr><td class="d1">js/components.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Funciones que devuelven HTML: layout, contractList, ticketTable, statCard, statusBadge, loading, errorMessage, esc.</td></tr>
+      <tr><td class="d1">js/format.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Constantes ROLES y TICKET_STATUS, etiquetas y formato de fechas. Úsalas en tus reglas.</td></tr>
       <tr><td>README.md</td><td><span class="chip chip-build">Reemplazar</span></td><td class="what">Lo sustituyes por el tuyo con las secciones de PRUEBA_TECNICA.md §12.</td></tr>
     </table>
   </div>
@@ -326,7 +326,7 @@
         <li>Base <code>MantenimientoDB</code> con Usuarios, Contratos y Tickets, claves, CHECK e índices.</li>
         <li>6 usuarios con contraseña bcrypt (uno inactivo), 4 contratos, 17 tickets.</li>
         <li>Login de base de datos <code>mantenimiento_app</code> con permisos mínimos.</li>
-        <li>Plantilla React que compila, con login funcional, rutas protegidas, cliente HTTP, tablas y Dockerfile.</li>
+        <li>Plantilla en JavaScript vanilla (sin build), con login funcional, rutas protegidas, cliente HTTP, tablas y Dockerfile.</li>
         <li>Script <code>tests/smoke.sh</code> con los mismos 36 casos que usa el evaluador, y ejemplos de Dockerfile y conexión por stack en <code>docs/ejemplos/</code>.</li>
       </ul>
     </div>
@@ -346,14 +346,14 @@
       <ul>
         <li>Dashboard: contadores de tickets pendientes y en proceso.</li>
         <li>Detalle: botones por rol y estatus, llamada al PATCH, refresco y errores 403/409.</li>
-        <li>Servicio <code>frontend</code> en compose con el build arg <code>VITE_API_URL</code>.</li>
+        <li>Servicio <code>frontend</code> en compose con la variable de entorno <code>API_URL</code>.</li>
         <li>Probar con los tres roles y con <code>tecnico04</code>.</li>
       </ul>
     </div>
   </div>
 
   <h2 id="endpoints">Endpoints que debe exponer tu API</h2>
-  <p>Rutas, cuerpos y respuestas exactos. La plantilla ya los consume así. El detalle con ejemplos JSON está en <code>PRUEBA_TECNICA.md</code> §6 y en la cabecera de <code>frontend/src/api/client.js</code>.</p>
+  <p>Rutas, cuerpos y respuestas exactos. La plantilla ya los consume así. El detalle con ejemplos JSON está en <code>PRUEBA_TECNICA.md</code> §6 y en la cabecera de <code>frontend/js/api.js</code>.</p>
   <div class="tbl">
     <table class="data">
       <thead><tr><th>Método</th><th>Ruta</th><th>Quién</th><th>Qué hace</th><th>Obligatorio</th></tr></thead>
@@ -395,12 +395,12 @@
       </tbody>
     </table>
   </div>
-  <div class="note">Ocultar un botón en React no es seguridad. El evaluador ejecuta <code>bash tests/smoke.sh</code> contra tu API: un técnico haciendo PATCH al ticket 102 debe recibir 403, cualquier PATCH al ticket 104 (finalizado) debe recibir 409 y <code>tecnico01</code> debe recibir 403 en el contrato CON-004, donde no tiene tickets. Ejecuta el script tú mismo antes de entregar.</div>
+  <div class="note">Ocultar un botón en el frontend no es seguridad. El evaluador ejecuta <code>bash tests/smoke.sh</code> contra tu API: un técnico haciendo PATCH al ticket 102 debe recibir 403, cualquier PATCH al ticket 104 (finalizado) debe recibir 409 y <code>tecnico01</code> debe recibir 403 en el contrato CON-004, donde no tiene tickets. Ejecuta el script tú mismo antes de entregar.</div>
 
   <h2 id="prioridad">Orden de trabajo sugerido</h2>
   <p>No se espera terminar todo. Se evalúa qué priorizas y la calidad de lo que entregas. Avanza en este orden y haz commit en cuanto cada punto funcione.</p>
   <ol class="steps">
-    <li><div>Levantar la base, conectarte, revisar datos. <code>npm install</code> en <code>frontend/</code>.</div><span class="time">0:00 – 0:08</span></li>
+    <li><div>Levantar la base, conectarte, revisar datos. Revisar la plantilla de <code>frontend/</code> (sin build).</div><span class="time">0:00 – 0:08</span></li>
     <li><div>Backend: conexión con <code>mantenimiento_app</code>, login con bcrypt y token.</div><span class="time">0:08 – 0:28</span></li>
     <li><div>Middleware de autenticación y roles. Los 3 GET filtrados por rol.</div><span class="time">0:28 – 0:45</span></li>
     <li><div><code>PATCH /api/tickets/{id}</code> con transiciones y permisos.</div><span class="time">0:45 – 0:55</span></li>
@@ -445,12 +445,12 @@ TrustServerCertificate=True;</code></pre>
 
   <h2 id="arranque">Antes de que empiece el tiempo</h2>
   <p>Estos pasos descargan imágenes y dependencias. Hazlos antes de iniciar el cronómetro; no forman parte de la prueba.</p>
-  <pre><code>git clone https://github.com/sistemasbacros/prueba-tecnica.git
+  <pre><code>git clone -b feature/frontend-vanilla https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d            # descarga SQL Server (~1.5 GB) y carga los datos
 docker compose logs db-init     # "Base de datos inicializada correctamente"
 
-cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:5173 (desarrollo)
+cd frontend &amp;&amp; npx serve -l 3000 .           # http://localhost:3000 (desarrollo, sin build)
 # Ten listo el runtime de tu backend (Node, .NET SDK, Python, PHP+Composer…)
 # Lee docs/ejemplos/ para tu stack y tests/README.md</code></pre>
   <p>Al entregar, el evaluador ejecutará <code>docker compose up -d --build</code>, luego <code>bash tests/smoke.sh</code> y abrirá el navegador.</p>
@@ -469,11 +469,11 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:
   </ul>
 
   <div class="links">
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/README.md">README del repositorio</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/frontend/src/api/client.js">Endpoints en client.js</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/tests/README.md">Verificación (tests/)</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/docs/ejemplos/README.md">Ejemplos por stack</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vanilla/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vanilla/README.md">README del repositorio</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vanilla/frontend/js/api.js">Endpoints en api.js</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vanilla/tests/README.md">Verificación (tests/)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vanilla/docs/ejemplos/README.md">Ejemplos por stack</a>
   </div>
 
 </div>
