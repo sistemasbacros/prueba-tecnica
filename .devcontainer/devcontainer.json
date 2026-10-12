@@ -1,9 +1,6 @@
 {
   "name": "Prueba tecnica Bacros - frontend vue",
   "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
   "hostRequirements": {
     "cpus": 2,
     "memory": "8gb",
@@ -33,7 +30,7 @@
       "onAutoForward": "openBrowser"
     }
   },
-  "postCreateCommand": "docker compose pull db || true",
+  "postCreateCommand": "for i in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 2; done; docker compose pull db || true",
   "customizations": {
     "vscode": {
       "extensions": [
