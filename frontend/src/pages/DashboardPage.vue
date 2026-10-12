@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+<script setup>
+import { onMounted, ref } from 'vue';
 import { api } from '../api/client.js';
-import StatCard from '../components/StatCard.jsx';
-import ContractList from '../components/ContractList.jsx';
-import { ErrorMessage, Loading } from '../components/Feedback.jsx';
+import StatCard from '../components/StatCard.vue';
+import ContractList from '../components/ContractList.vue';
+import LoadingMessage from '../components/LoadingMessage.vue';
+import ErrorMessage from '../components/ErrorMessage.vue';
 
 /* =====================================================================
  * PARA EL CANDIDATO
@@ -42,52 +44,47 @@ import { ErrorMessage, Loading } from '../components/Feedback.jsx';
 /**
  * Dashboard: contadores + lista de contratos del usuario autenticado.
  */
-export default function DashboardPage() {
-  const [contracts, setContracts] = useState([]);
-  const [stats, setStats] = useState({ contratosActivos: null, ticketsPendientes: null, ticketsEnProceso: null });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const contracts = ref([]);
+const stats = ref({ contratosActivos: null, ticketsPendientes: null, ticketsEnProceso: null });
+const loading = ref(true);
+const error = ref(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await api.getContracts();
-      setContracts(data);
-      // TODO (candidato): el candidato debe implementar aquí el cálculo de
-      // ticketsPendientes y ticketsEnProceso (ver opciones A y B en la cabecera).
-      setStats({
-        contratosActivos: data.filter((c) => c.estatus === 'ACTIVO').length,
-        ticketsPendientes: null, // <- reemplazar null por el conteo real
-        ticketsEnProceso: null, // <- reemplazar null por el conteo real
-      });
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  return (
-    <>
-      <h1>Dashboard</h1>
-
-      <section className="stats">
-        <StatCard label="Contratos activos" value={stats.contratosActivos} tone="info" />
-        <StatCard label="Tickets pendientes" value={stats.ticketsPendientes} tone="warning" />
-        <StatCard label="Tickets en proceso" value={stats.ticketsEnProceso} tone="success" />
-      </section>
-
-      <section>
-        <h2>Contratos</h2>
-        {loading && <Loading />}
-        <ErrorMessage error={error} onRetry={load} />
-        {!loading && !error && <ContractList contracts={contracts} />}
-      </section>
-    </>
-  );
+async function load() {
+  loading.value = true;
+  error.value = null;
+  try {
+    const data = await api.getContracts();
+    contracts.value = data;
+    // TODO (candidato): el candidato debe implementar aquí el cálculo de
+    // ticketsPendientes y ticketsEnProceso (ver opciones A y B en la cabecera).
+    stats.value = {
+      contratosActivos: data.filter((c) => c.estatus === 'ACTIVO').length,
+      ticketsPendientes: null, // <- reemplazar null por el conteo real
+      ticketsEnProceso: null, // <- reemplazar null por el conteo real
+    };
+  } catch (err) {
+    error.value = err;
+  } finally {
+    loading.value = false;
+  }
 }
+
+onMounted(load);
+</script>
+
+<template>
+  <h1>Dashboard</h1>
+
+  <section class="stats">
+    <StatCard label="Contratos activos" :value="stats.contratosActivos" tone="info" />
+    <StatCard label="Tickets pendientes" :value="stats.ticketsPendientes" tone="warning" />
+    <StatCard label="Tickets en proceso" :value="stats.ticketsEnProceso" tone="success" />
+  </section>
+
+  <section>
+    <h2>Contratos</h2>
+    <LoadingMessage v-if="loading" />
+    <ErrorMessage :error="error" :on-retry="load" />
+    <ContractList v-if="!loading && !error" :contracts="contracts" />
+  </section>
+</template>

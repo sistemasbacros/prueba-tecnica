@@ -152,11 +152,11 @@
   <header>
     <div class="eyebrow">Prueba técnica · Full Stack Senior · 1:30 horas</div>
     <h1>Sistema de Mantenimiento: contratos y tickets</h1>
-    <p class="lead">Nosotros entregamos la base de datos en Docker y una plantilla de frontend en React. Tú construyes la API REST y completas el frontend. Esta página resume qué recibes, qué debes implementar y en qué archivos. El enunciado completo y obligatorio es <code>PRUEBA_TECNICA.md</code>.</p>
+    <p class="lead">Nosotros entregamos la base de datos en Docker y una plantilla de frontend en Vue. Tú construyes la API REST y completas el frontend. Esta página resume qué recibes, qué debes implementar y en qué archivos. El enunciado completo y obligatorio es <code>PRUEBA_TECNICA.md</code>.</p>
     <div class="meta">
       <span>Repositorio: <strong>github.com/sistemasbacros/prueba-tecnica</strong></span>
       <span>Base: <strong>SQL Server 2022</strong></span>
-      <span>Frontend: <strong>React (plantilla incluida)</strong></span>
+      <span>Frontend: <strong>Vue (plantilla incluida)</strong></span>
       <span>Backend: <strong>lenguaje libre</strong></span>
     </div>
   </header>
@@ -171,7 +171,7 @@
   </div>
 
   <div class="map">
-    <svg viewBox="0 0 980 540" role="img" aria-label="Mapa de la arquitectura: navegador, frontend React, API REST y SQL Server dentro de docker compose, con los archivos que corresponden a cada parte">
+    <svg viewBox="0 0 980 540" role="img" aria-label="Mapa de la arquitectura: navegador, frontend Vue, API REST y SQL Server dentro de docker compose, con los archivos que corresponden a cada parte">
       <defs>
         <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="currentColor" style="color: var(--fg)"></path>
@@ -195,10 +195,10 @@
       <!-- Frontend -->
       <rect class="box box-todo" x="210" y="80" width="220" height="190"></rect>
       <text x="320" y="108" text-anchor="middle" class="t-title">FRONTEND</text>
-      <text x="320" y="126" text-anchor="middle" class="t-small">React + Vite + nginx</text>
+      <text x="320" y="126" text-anchor="middle" class="t-small">Vue 3 + Vite + nginx</text>
       <text x="320" y="150" text-anchor="middle" class="t-tag t-todo">PLANTILLA · COMPLETAR 2 TODO</text>
-      <text x="226" y="178" class="file">pages/DashboardPage.jsx</text>
-      <text x="226" y="194" class="file">pages/ContractDetailPage.jsx</text>
+      <text x="226" y="178" class="file">pages/DashboardPage.vue</text>
+      <text x="226" y="194" class="file">pages/ContractDetailPage.vue</text>
       <text x="226" y="218" class="t-small">Login, rutas, cliente HTTP,</text>
       <text x="226" y="234" class="t-small">tablas y Dockerfile ya listos</text>
       <text x="320" y="258" text-anchor="middle" class="t-mono">contenedor frontend · :3000</text>
@@ -304,14 +304,14 @@
       <tr><td class="dir">backend/</td><td><span class="chip chip-build">Tú lo creas</span></td><td class="what">Tu API completa. Solo hay un README con el resumen de endpoints.</td></tr>
       <tr><td class="d1">Dockerfile</td><td><span class="chip chip-build">Crear</span></td><td class="what">Imagen de tu API. Multi-stage y sin secretos horneados.</td></tr>
       <tr><td class="d1">.env.example</td><td><span class="chip chip-build">Crear</span></td><td class="what">DB_HOST=db, DB_USER=mantenimiento_app, JWT_SECRET, PORT…</td></tr>
-      <tr><td class="dir">frontend/</td><td><span class="chip chip-todo">Plantilla</span></td><td class="what">React + Vite. Ya compila y ya tiene Dockerfile.</td></tr>
+      <tr><td class="dir">frontend/</td><td><span class="chip chip-todo">Plantilla</span></td><td class="what">Vue 3 + Vite. Ya compila y ya tiene Dockerfile.</td></tr>
       <tr><td class="d1">Dockerfile · nginx.conf · .env.example</td><td><span class="chip chip-done">Completo</span></td><td class="what">Build multi-stage y nginx con fallback SPA. Proxy a <code>/api</code> opcional.</td></tr>
       <tr><td class="d1">src/api/client.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Cliente HTTP con token. Su cabecera lista los endpoints que tu backend debe exponer.</td></tr>
-      <tr><td class="d1">src/context/AuthContext.jsx</td><td><span class="chip chip-done">Completo</span></td><td class="what">Sesión, login, logout y cierre automático ante 401.</td></tr>
-      <tr><td class="d1">src/pages/LoginPage.jsx</td><td><span class="chip chip-done">Completo</span></td><td class="what">Funciona en cuanto tu login responda con <code>{ token, user }</code>.</td></tr>
-      <tr><td class="d1">src/pages/DashboardPage.jsx</td><td><span class="chip chip-todo">Completar</span></td><td class="what">En <code>load()</code>: contadores de tickets pendientes y en proceso para el usuario.</td></tr>
-      <tr><td class="d1">src/pages/ContractDetailPage.jsx</td><td><span class="chip chip-todo">Completar</span></td><td class="what"><code>getAvailableActions</code> (botones por rol y estatus) y <code>handleChangeStatus</code> (PATCH, refrescar, mostrar 403/409).</td></tr>
-      <tr><td class="d1">src/components/*</td><td><span class="chip chip-done">Completo</span></td><td class="what">Layout, ProtectedRoute, ContractList, TicketTable, StatCard, StatusBadge, Feedback.</td></tr>
+      <tr><td class="d1">src/auth/session.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Sesión, login, logout y cierre automático ante 401.</td></tr>
+      <tr><td class="d1">src/pages/LoginPage.vue</td><td><span class="chip chip-done">Completo</span></td><td class="what">Funciona en cuanto tu login responda con <code>{ token, user }</code>.</td></tr>
+      <tr><td class="d1">src/pages/DashboardPage.vue</td><td><span class="chip chip-todo">Completar</span></td><td class="what">En <code>load()</code>: contadores de tickets pendientes y en proceso para el usuario.</td></tr>
+      <tr><td class="d1">src/pages/ContractDetailPage.vue</td><td><span class="chip chip-todo">Completar</span></td><td class="what"><code>getAvailableActions</code> (botones por rol y estatus) y <code>handleChangeStatus</code> (PATCH, refrescar, mostrar 403/409).</td></tr>
+      <tr><td class="d1">src/components/*</td><td><span class="chip chip-done">Completo</span></td><td class="what">AppLayout, guard de rutas en router.js, ContractList, TicketTable, StatCard, StatusBadge, LoadingMessage, ErrorMessage.</td></tr>
       <tr><td class="d1">src/utils/format.js</td><td><span class="chip chip-done">Completo</span></td><td class="what">Constantes ROLES y TICKET_STATUS, etiquetas y formato de fechas. Úsalas en tus reglas.</td></tr>
       <tr><td>README.md</td><td><span class="chip chip-build">Reemplazar</span></td><td class="what">Lo sustituyes por el tuyo con las secciones de PRUEBA_TECNICA.md §12.</td></tr>
     </table>
@@ -326,7 +326,7 @@
         <li>Base <code>MantenimientoDB</code> con Usuarios, Contratos y Tickets, claves, CHECK e índices.</li>
         <li>6 usuarios con contraseña bcrypt (uno inactivo), 4 contratos, 17 tickets.</li>
         <li>Login de base de datos <code>mantenimiento_app</code> con permisos mínimos.</li>
-        <li>Plantilla React que compila, con login funcional, rutas protegidas, cliente HTTP, tablas y Dockerfile.</li>
+        <li>Plantilla Vue que compila, con login funcional, rutas protegidas, cliente HTTP, tablas y Dockerfile.</li>
         <li>Script <code>tests/smoke.sh</code> con los mismos 36 casos que usa el evaluador, y ejemplos de Dockerfile y conexión por stack en <code>docs/ejemplos/</code>.</li>
       </ul>
     </div>
@@ -395,7 +395,7 @@
       </tbody>
     </table>
   </div>
-  <div class="note">Ocultar un botón en React no es seguridad. El evaluador ejecuta <code>bash tests/smoke.sh</code> contra tu API: un técnico haciendo PATCH al ticket 102 debe recibir 403, cualquier PATCH al ticket 104 (finalizado) debe recibir 409 y <code>tecnico01</code> debe recibir 403 en el contrato CON-004, donde no tiene tickets. Ejecuta el script tú mismo antes de entregar.</div>
+  <div class="note">Ocultar un botón en Vue no es seguridad. El evaluador ejecuta <code>bash tests/smoke.sh</code> contra tu API: un técnico haciendo PATCH al ticket 102 debe recibir 403, cualquier PATCH al ticket 104 (finalizado) debe recibir 409 y <code>tecnico01</code> debe recibir 403 en el contrato CON-004, donde no tiene tickets. Ejecuta el script tú mismo antes de entregar.</div>
 
   <h2 id="prioridad">Orden de trabajo sugerido</h2>
   <p>No se espera terminar todo. Se evalúa qué priorizas y la calidad de lo que entregas. Avanza en este orden y haz commit en cuanto cada punto funcione.</p>
@@ -445,7 +445,7 @@ TrustServerCertificate=True;</code></pre>
 
   <h2 id="arranque">Antes de que empiece el tiempo</h2>
   <p>Estos pasos descargan imágenes y dependencias. Hazlos antes de iniciar el cronómetro; no forman parte de la prueba.</p>
-  <pre><code>git clone https://github.com/sistemasbacros/prueba-tecnica.git
+  <pre><code>git clone -b feature/frontend-vue https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d            # descarga SQL Server (~1.5 GB) y carga los datos
 docker compose logs db-init     # "Base de datos inicializada correctamente"
@@ -469,11 +469,11 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:
   </ul>
 
   <div class="links">
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/README.md">README del repositorio</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/frontend/src/api/client.js">Endpoints en client.js</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/tests/README.md">Verificación (tests/)</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/docs/ejemplos/README.md">Ejemplos por stack</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vue/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vue/README.md">README del repositorio</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vue/frontend/src/api/client.js">Endpoints en client.js</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vue/tests/README.md">Verificación (tests/)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-vue/docs/ejemplos/README.md">Ejemplos por stack</a>
   </div>
 
 </div>

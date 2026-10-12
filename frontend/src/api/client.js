@@ -21,7 +21,7 @@
  * - Agrega el header Authorization: Bearer <token> a todas las peticiones.
  * - Convierte las respuestas de error de la API en instancias de ApiError.
  * - Si la API responde 401 emite el evento `auth:unauthorized` para que
- *   AuthContext cierre la sesión y redirija al login.
+ *   useAuth (auth/session.js) cierre la sesión y redirija al login.
  *
  * La URL base viene de la variable de entorno VITE_API_URL (ver .env.example).
  *

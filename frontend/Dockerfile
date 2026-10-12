@@ -1,4 +1,4 @@
-# Etapa 1: compilar la aplicación React con Vite
+# Etapa 1: compilar la aplicación Vue con Vite
 FROM node:22-alpine AS build
 WORKDIR /app
 

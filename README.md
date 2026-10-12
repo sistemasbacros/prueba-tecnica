@@ -6,7 +6,7 @@ Este repositorio contiene:
 
 - **La base de datos lista para usar:** SQL Server 2022 en Docker, con esquema y datos iniciales que se
   cargan automáticamente.
-- **Una plantilla de frontend en React** (`frontend/`) con login, rutas, cliente HTTP y componentes,
+- **Una plantilla de frontend en Vue** (`frontend/`) con login, rutas, cliente HTTP y componentes,
   para que no empieces desde cero.
 - **El enunciado completo** en [`PRUEBA_TECNICA.md`](./PRUEBA_TECNICA.md). Léelo antes de empezar.
 - **Una guía visual** en [`docs/guia-candidato.html`](./docs/guia-candidato.html) con el mapa conceptual de la
@@ -28,10 +28,10 @@ en **tres contenedores** (`db`, `backend`, `frontend`) con `docker compose`.
 Descarga imágenes y dependencias antes de iniciar el cronómetro; no forman parte de la prueba:
 
 ```bash
-git clone https://github.com/sistemasbacros/prueba-tecnica.git
+git clone -b feature/frontend-vue https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d                 # descarga SQL Server (~1.5 GB) y carga los datos
-cd frontend && npm install && cd ..  # dependencias de la plantilla React
+cd frontend && npm install && cd ..  # dependencias de la plantilla Vue
 ```
 
 Ten listo el runtime de tu backend y revisa el ejemplo de tu stack en `docs/ejemplos/`.
@@ -80,7 +80,7 @@ Resultado esperado: 6 usuarios, 4 contratos, 17 tickets.
 │       ├── 01-schema.sql     # Base MantenimientoDB, login mantenimiento_app, tablas, índices
 │       └── 02-seed.sql       # Datos iniciales (usuarios, contratos, tickets)
 ├── backend/                  # <- tu API REST (ver backend/README.md)
-├── frontend/                 # <- plantilla React (ver frontend/README.md)
+├── frontend/                 # <- plantilla Vue (ver frontend/README.md)
 ├── tests/
 │   ├── smoke.sh              # Verificación automática de la API (la usa el evaluador)
 │   └── api.http              # Las mismas peticiones para REST Client / Postman

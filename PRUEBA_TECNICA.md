@@ -16,7 +16,7 @@ sección "Decisiones y supuestos" de tu README.
 4. [Base de datos (entregada)](#4-base-de-datos-entregada)
 5. [Paso 1 – Levantar la base de datos](#5-paso-1--levantar-la-base-de-datos)
 6. [Paso 2 – API REST](#6-paso-2--api-rest)
-7. [Paso 3 – Frontend en React](#7-paso-3--frontend-en-react)
+7. [Paso 3 – Frontend en Vue](#7-paso-3--frontend-en-vue)
 8. [Paso 4 – Contenedores y docker-compose](#8-paso-4--contenedores-y-docker-compose)
 9. [Roles y permisos](#9-roles-y-permisos)
 10. [Manejo de errores](#10-manejo-de-errores)
@@ -39,7 +39,7 @@ Nosotros entregamos la base de datos ya construida (SQL Server en Docker, con ta
 Tú desarrollas la API REST y el frontend:
 
 ```
-Base de datos (entregada)  →  API REST (tú)  →  Frontend en React (tú)
+Base de datos (entregada)  →  API REST (tú)  →  Frontend en Vue (tú)
 ```
 
 ### Qué se espera en 1:30 horas (perfil senior)
@@ -68,7 +68,7 @@ que no arranca, no.
 | # | Regla |
 |---|-------|
 | 1 | **Backend:** lenguaje y framework de libre elección (Node, .NET, PHP/Laravel, Python, Java, Go, Rust, etc.). Justifica brevemente tu elección en el README. |
-| 2 | **Frontend:** obligatoriamente en **React**. En `frontend/` hay una plantilla (Vite + React Router) con login, rutas, cliente HTTP y componentes ya hechos; úsala o reemplázala, pero las pantallas y requisitos de la sección 7 son los mismos. |
+| 2 | **Frontend:** obligatoriamente en **Vue**. En `frontend/` hay una plantilla (Vite + Vue Router) con login, rutas, cliente HTTP y componentes ya hechos; úsala o reemplázala, pero las pantallas y requisitos de la sección 7 son los mismos. |
 | 3 | **Tres contenedores separados** orquestados por el `docker-compose.yml` de este repositorio: `db` (entregado, no se modifica), `backend` (tuyo) y `frontend` (tuyo). |
 | 4 | **No modifiques** `db/init/01-schema.sql` ni `db/init/02-seed.sql`. Si necesitas objetos adicionales (vistas, índices, procedimientos), agrégalos en un archivo nuevo `db/init/03-<nombre>.sql` y explícalo en el README. |
 | 5 | **No guardes contraseñas en texto plano** ni cambies los hashes de la base. El login debe validar contra el hash bcrypt existente. |
@@ -84,7 +84,7 @@ que no arranca, no.
 ```
 ┌─────────────────────────────┐
 │          FRONTEND           │  contenedor `frontend`
-│   React (Vite / Next / CRA) │  puerto host: el que elijas (sugerido 3000)
+│   Vue 3 (Vite / Nuxt)       │  puerto host: el que elijas (sugerido 3000)
 └──────────────┬──────────────┘
                │ HTTP / JSON  (fetch / axios)
                ▼
@@ -234,7 +234,7 @@ iniciar el cronómetro:
 ### Levantar la base
 
 ```bash
-git clone https://github.com/sistemasbacros/prueba-tecnica.git
+git clone -b feature/frontend-vue https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d
 ```
@@ -440,13 +440,13 @@ Detalle en [`tests/README.md`](./tests/README.md).
 
 ---
 
-## 7. Paso 3 – Frontend en React
+## 7. Paso 3 – Frontend en Vue
 
 Tres pantallas. No se evalúa diseño visual: se evalúa que funcione, que esté bien estructurado y que
 maneje los estados de carga y error.
 
-**Para no empezar desde cero, en `frontend/` hay una plantilla React (Vite) lista para usar.**
-Incluye rutas, login funcional, cliente HTTP con token, contexto de sesión, dashboard, detalle de
+**Para no empezar desde cero, en `frontend/` hay una plantilla Vue 3 (Vite) lista para usar.**
+Incluye rutas, login funcional, cliente HTTP con token, sesión, dashboard, detalle de
 contrato, tablas, badges, estados de carga/error, `Dockerfile` y `nginx.conf`. Detalle en
 [`frontend/README.md`](./frontend/README.md).
 
@@ -454,8 +454,8 @@ Lo que **tú** debes completar está marcado con `TODO (candidato)`:
 
 | Archivo                                      | Qué falta                                                                                   |
 |----------------------------------------------|---------------------------------------------------------------------------------------------|
-| `frontend/src/pages/DashboardPage.jsx`       | Contadores de tickets pendientes y en proceso para el usuario autenticado.                  |
-| `frontend/src/pages/ContractDetailPage.jsx`  | `getAvailableActions` (qué botones ver según rol y estatus) y `handleChangeStatus` (llamar a `PATCH /api/tickets/{id}`, refrescar, mostrar errores `403`/`409`). |
+| `frontend/src/pages/DashboardPage.vue`       | Contadores de tickets pendientes y en proceso para el usuario autenticado.                  |
+| `frontend/src/pages/ContractDetailPage.vue`  | `getAvailableActions` (qué botones ver según rol y estatus) y `handleChangeStatus` (llamar a `PATCH /api/tickets/{id}`, refrescar, mostrar errores `403`/`409`). |
 
 Puedes modificar cualquier archivo de la plantilla, cambiar estilos, usar TypeScript o una librería de
 componentes. Si prefieres no usarla y hacer tu propio frontend, también es válido, pero debes cumplir
@@ -684,7 +684,7 @@ Para 1:30 horas, esto es lo **obligatorio** (con esto se obtiene la calificació
 - [ ] `POST /api/auth/login` con bcrypt y token; rechaza inactivos.
 - [ ] `GET /api/contracts`, `GET /api/contracts/{id}`, `GET /api/contracts/{id}/tickets` con filtrado por rol.
 - [ ] `PATCH /api/tickets/{id}` con reglas de negocio y permisos.
-- [ ] Frontend React con Login, Dashboard y Detalle de contrato consumiendo la API (completar los `TODO (candidato)` de la plantilla).
+- [ ] Frontend Vue con Login, Dashboard y Detalle de contrato consumiendo la API (completar los `TODO (candidato)` de la plantilla).
 - [ ] Manejo de errores con los códigos de la sección 10.
 - [ ] Variables de entorno + `.env.example`.
 - [ ] README según la sección 12, incluida la pregunta final.
@@ -716,7 +716,7 @@ CI/CD, Terraform, registro de usuarios, recuperación de contraseña, diseño vi
 
 ## Tecnologías utilizadas
 - Backend: <lenguaje + framework + versión>. Por qué lo elegí: ...
-- Frontend: React <versión> + <Vite/Next/...>
+- Frontend: Vue <versión> + <Vite/Nuxt/...>
 - Base de datos: SQL Server 2022 (entregada)
 
 ## Requisitos

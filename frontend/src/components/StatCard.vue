@@ -1,3 +1,4 @@
+<script setup>
 /* =====================================================================
  * PARA EL CANDIDATO
  * Estado del archivo: COMPLETO. No es necesario modificarlo.
@@ -5,11 +6,16 @@
  * ===================================================================== */
 
 /** Tarjeta de indicador para el dashboard. `tone`: neutral | info | warning | success. */
-export default function StatCard({ label, value, tone = 'neutral' }) {
-  return (
-    <div className={`stat-card stat-${tone}`}>
-      <span className="stat-label">{label}</span>
-      <span className="stat-value">{value ?? '—'}</span>
-    </div>
-  );
-}
+defineProps({
+  label: { type: String, required: true },
+  value: { type: [Number, String], default: null },
+  tone: { type: String, default: 'neutral' },
+});
+</script>
+
+<template>
+  <div :class="`stat-card stat-${tone}`">
+    <span class="stat-label">{{ label }}</span>
+    <span class="stat-value">{{ value ?? '—' }}</span>
+  </div>
+</template>
