@@ -28,7 +28,7 @@ en **tres contenedores** (`db`, `backend`, `frontend`) con `docker compose`.
 Descarga imágenes y dependencias antes de iniciar el cronómetro; no forman parte de la prueba:
 
 ```bash
-git clone https://github.com/sistemasbacros/prueba-tecnica.git
+git clone -b feature/frontend-react https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d                 # descarga SQL Server (~1.5 GB) y carga los datos
 cd frontend && npm install && cd ..  # dependencias de la plantilla React

@@ -234,7 +234,7 @@ iniciar el cronómetro:
 ### Levantar la base
 
 ```bash
-git clone https://github.com/sistemasbacros/prueba-tecnica.git
+git clone -b feature/frontend-react https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d
 ```

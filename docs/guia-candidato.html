@@ -445,7 +445,7 @@ TrustServerCertificate=True;</code></pre>
 
   <h2 id="arranque">Antes de que empiece el tiempo</h2>
   <p>Estos pasos descargan imágenes y dependencias. Hazlos antes de iniciar el cronómetro; no forman parte de la prueba.</p>
-  <pre><code>git clone https://github.com/sistemasbacros/prueba-tecnica.git
+  <pre><code>git clone -b feature/frontend-react https://github.com/sistemasbacros/prueba-tecnica.git
 cd prueba-tecnica
 docker compose up -d            # descarga SQL Server (~1.5 GB) y carga los datos
 docker compose logs db-init     # "Base de datos inicializada correctamente"
@@ -469,11 +469,11 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev    # http://localhost:
   </ul>
 
   <div class="links">
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/README.md">README del repositorio</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/frontend/src/api/client.js">Endpoints en client.js</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/tests/README.md">Verificación (tests/)</a>
-    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/main/docs/ejemplos/README.md">Ejemplos por stack</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-react/PRUEBA_TECNICA.md">Enunciado completo (PRUEBA_TECNICA.md)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-react/README.md">README del repositorio</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-react/frontend/src/api/client.js">Endpoints en client.js</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-react/tests/README.md">Verificación (tests/)</a>
+    <a href="https://github.com/sistemasbacros/prueba-tecnica/blob/feature/frontend-react/docs/ejemplos/README.md">Ejemplos por stack</a>
   </div>
 
 </div>
